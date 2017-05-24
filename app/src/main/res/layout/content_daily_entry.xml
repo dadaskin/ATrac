@@ -23,10 +23,12 @@
             android:id="@+id/dateView"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginStart="16dp"
-            android:layout_marginTop="16dp"
-            android:text="Monday, 22 May 2017"
+            android:layout_marginStart="@dimen/fab_margin"
+            android:layout_marginEnd="@dimen/fab_margin"
+            android:layout_marginTop="@dimen/fab_margin"
+            android:text="Wednesday, 24 May 2017"
             android:textSize="30sp"
+            android:paddingTop="@dimen/fab_margin"
             app:layout_constraintLeft_toLeftOf="parent"
             app:layout_constraintRight_toRightOf="parent"
         />
@@ -35,40 +37,163 @@
             android:id="@+id/actionButton"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginBottom="16dp"
-            android:layout_marginEnd="16dp"
-            android:layout_marginLeft="16dp"
-            android:layout_marginRight="16dp"
-            android:layout_marginStart="16dp"
-            android:paddingTop="15sp"
+            android:layout_marginBottom="20dp"
+            android:layout_marginEnd="20dp"
+            android:layout_marginLeft="20dp"
+            android:layout_marginRight="20dp"
+            android:layout_marginStart="20dp"
+            android:layout_marginTop="20dp"
+            android:paddingTop="@dimen/fab_margin"
             android:paddingBottom="15sp"
             android:paddingLeft="25sp"
             android:paddingRight="25sp"
             android:text="Action"
             android:textAlignment="center"
             android:textSize="30sp"
+            android:textColor="#ff000000"
+            android:background="#5f00ff00"
             app:layout_constraintTop_toBottomOf="@+id/dateView"
             app:layout_constraintLeft_toLeftOf="parent"
             app:layout_constraintRight_toRightOf="parent"
         />
 
-        <GridView
-            android:id="@+id/labelAndHoursGrid"
+        <TextView
+            android:id="@+id/startLabel"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:numColumns="2"
-            android:columnWidth="120dp"
-            android:horizontalSpacing="5dp"
-            android:verticalSpacing="5dp"
-            android:stretchMode="spacingWidthUniform"
-            android:background="#30000000"
-            app:layout_constraintLeft_toLeftOf="parent"
-            android:layout_marginLeft="20dp"
+            android:layout_marginTop="@dimen/start_separator_margin"
+            android:layout_marginStart="@dimen/label_left_margin"
+            android:text="Start:"
+            android:textSize="30sp"
             app:layout_constraintTop_toBottomOf="@+id/actionButton"
-            android:layout_marginTop="19dp"
+            app:layout_constraintLeft_toLeftOf="parent"
+         />
+
+        <TextView
+            android:id="@+id/startHours"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginEnd="@dimen/hours_right_margin"
+            android:text="--:--"
+            android:textSize="30sp"
+            app:layout_constraintTop_toTopOf="@+id/startLabel"
+            app:layout_constraintBottom_toBottomOf="@+id/startLabel"
             app:layout_constraintRight_toRightOf="parent"
-            android:layout_marginRight="20dp"
-            app:layout_constraintHorizontal_bias="0.0" />
+        />
+
+        <TextView
+            android:id="@+id/lunchLabel"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/fab_margin"
+            android:layout_marginStart="@dimen/label_left_margin"
+            android:text="Lunch:"
+            android:textSize="30sp"
+            app:layout_constraintTop_toBottomOf="@+id/startLabel"
+            app:layout_constraintLeft_toLeftOf="parent"
+        />
+
+        <TextView
+            android:id="@+id/lunchHours"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginEnd="@dimen/hours_right_margin"
+            android:text="--:--"
+            android:textSize="30sp"
+            app:layout_constraintTop_toTopOf="@+id/lunchLabel"
+            app:layout_constraintBottom_toBottomOf="@+id/lunchLabel"
+            app:layout_constraintRight_toRightOf="parent"
+        />
+
+        <TextView
+            android:id="@+id/returnLabel"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/fab_margin"
+            android:layout_marginStart="@dimen/label_left_margin"
+            android:text="Return:"
+            android:textSize="30sp"
+            app:layout_constraintTop_toBottomOf="@+id/lunchLabel"
+            app:layout_constraintLeft_toLeftOf="parent"
+        />
+
+        <TextView
+            android:id="@+id/returnHours"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginEnd="@dimen/hours_right_margin"
+            android:text="--:--"
+            android:textSize="30sp"
+            app:layout_constraintTop_toTopOf="@+id/returnLabel"
+            app:layout_constraintBottom_toBottomOf="@+id/returnLabel"
+            app:layout_constraintRight_toRightOf="parent"
+        />
+
+        <TextView
+            android:id="@+id/stopLabel"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/fab_margin"
+            android:layout_marginStart="@dimen/label_left_margin"
+            android:text="Stop:"
+            android:textSize="30sp"
+            app:layout_constraintTop_toBottomOf="@+id/returnLabel"
+            app:layout_constraintLeft_toLeftOf="parent"
+        />
+
+        <TextView
+            android:id="@+id/stopHours"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginEnd="@dimen/hours_right_margin"
+            android:text="--:--"
+            android:textSize="30sp"
+            app:layout_constraintTop_toTopOf="@+id/stopLabel"
+            app:layout_constraintBottom_toBottomOf="@+id/stopLabel"
+            app:layout_constraintRight_toRightOf="parent"
+        />
+
+        <TextView
+            android:id="@+id/totalLabel"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/total_separator_margin"
+            android:layout_marginStart="@dimen/label_left_margin"
+            android:text="Total:"
+            android:textSize="30sp"
+            app:layout_constraintTop_toBottomOf="@+id/returnLabel"
+            app:layout_constraintLeft_toLeftOf="parent"
+        />
+
+        <TextView
+            android:id="@+id/totalHours"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginEnd="@dimen/hours_right_margin"
+            android:text="00.0"
+            android:textSize="30sp"
+            app:layout_constraintTop_toTopOf="@+id/totalLabel"
+            app:layout_constraintBottom_toBottomOf="@+id/totalLabel"
+            app:layout_constraintRight_toRightOf="parent"
+        />
+
+        <!--<GridView-->
+            <!--android:id="@+id/labelAndHoursGrid"-->
+            <!--android:layout_width="wrap_content"-->
+            <!--android:layout_height="wrap_content"-->
+            <!--android:numColumns="2"-->
+            <!--android:columnWidth="120dp"-->
+            <!--android:horizontalSpacing="5dp"-->
+            <!--android:verticalSpacing="5dp"-->
+            <!--android:stretchMode="spacingWidthUniform"-->
+            <!--android:background="#30000000"-->
+            <!--app:layout_constraintLeft_toLeftOf="parent"-->
+            <!--android:layout_marginLeft="20dp"-->
+            <!--app:layout_constraintTop_toBottomOf="@+id/actionButton"-->
+            <!--android:layout_marginTop="19dp"-->
+            <!--app:layout_constraintRight_toRightOf="parent"-->
+            <!--android:layout_marginRight="20dp"-->
+            <!--app:layout_constraintHorizontal_bias="0.0" />-->
 
 
 </android.support.constraint.ConstraintLayout>

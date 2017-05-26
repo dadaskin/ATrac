@@ -3,5 +3,5 @@
     <dimen name="label_left_margin">100dp</dimen>
     <dimen name="hours_right_margin">100dp</dimen>
     <dimen name="start_separator_margin">30dp</dimen>
-    <dimen name="total_separator_margin">70dp</dimen>
+    <dimen name="total_separator_margin">100dp</dimen>
 </resources>

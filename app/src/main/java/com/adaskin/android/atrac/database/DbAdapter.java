@@ -5,6 +5,14 @@ import android.content.Context;
 import android.database.Cursor;
 import android.database.SQLException;
 import android.database.sqlite.SQLiteDatabase;
+import android.os.Environment;
+
+import com.adaskin.android.atrac.models.DailyEntry;
+
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
+import java.nio.channels.FileChannel;
 
 /**
  * Created by Dave on 5/25/2017.
@@ -44,11 +52,11 @@ public class DbAdapter {
 
     private ContentValues createDailyEntrysCV(DailyEntry entry) {
         ContentValues cv = new ContentValues();
-        cv.put(H_DATE, entry.mDate);
-        cv.put(H_START, entry.mStart);
-        cv.put(H_LUNCH, entry.mLunch);
-        cv.put(H_RETURN, entry.mReturn);
-        cv.put(H_STOP, entry.mStop);
+        cv.put(H_DATE, entry.mDateString);
+        cv.put(H_START, entry.mStartString);
+        cv.put(H_LUNCH, entry.mLunchString);
+        cv.put(H_RETURN, entry.mReturnString);
+        cv.put(H_STOP, entry.mStopString);
 
         return cv;
     }
@@ -89,11 +97,88 @@ public class DbAdapter {
     public DailyEntry fetchQuoteObjectFromId(long id) {
         // Get elements of the Quote object
         Cursor cursor = fetchDailyEntryRecordFromId(id);
-        return makeQuoteFromCursor(cursor);
+        return makeDailyEntryFromCursor(cursor);
     }
 
     public DailyEntry makeDailyEntryFromCursor(Cursor cursor) {
         String dateString = cursor.getString(cursor.getColumnIndex(H_DATE));
-        String
+        String startString = cursor.getString(cursor.getColumnIndex(H_START));
+        String lunchString = cursor.getString(cursor.getColumnIndex(H_LUNCH));
+        String returnString = cursor.getString(cursor.getColumnIndex(H_RETURN));
+        String stopString = cursor.getString(cursor.getColumnIndex(H_STOP));
+
+        DailyEntry dailyEntry = new DailyEntry(dateString,startString,lunchString, returnString, stopString);
+
+        return dailyEntry;
     }
+
+    private Cursor fetchAllDailyEntryRecords() {
+        String sql = "select " + H_ROW_ID + " as _id, * from " + DAILY_ENTRY_TABLE;
+        Cursor cursor = mDb.rawQuery(sql, new String[] {} );
+        cursor.moveToFirst();
+        return cursor;
+    }
+
+    public void changeDailyEntry(long id, DailyEntry newDailyEntry) {
+        ContentValues cv = createDailyEntrysCV(newDailyEntry);
+        mDb.update(DAILY_ENTRY_TABLE,
+                   cv,
+                   H_ROW_ID + "=?",
+                   new String[] {String.valueOf(id)});
+    }
+
+    public void removeDailyEntryRecord(String dateString) {
+        long id = fetchDailyEntryIdFromDate(dateString);
+        mDb.delete(DAILY_ENTRY_TABLE, H_ROW_ID + "=?", new String[] {String.valueOf(id)});
+    }
+
+    public boolean importDB()
+    {
+        boolean result = false;
+        try  {
+            String srcFileName = Environment.getExternalStorageDirectory() + "/ATrac_backup.db";
+            File srcFile = new File(srcFileName);
+            File dstFile = mContext.getDatabasePath(DbAdapter.DATABASE_NAME);
+
+            FileChannel src = new FileInputStream(srcFile).getChannel();
+            FileChannel dst = new FileOutputStream(dstFile).getChannel();
+
+            dst.transferFrom(src, 0, src.size());
+            src.close();
+            dst.close();
+
+            result = true;
+
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
+        return result;
+    }
+
+    public boolean exportDB()
+    {
+        boolean result = false;
+        try {
+            String dstFileName = Environment.getExternalStorageDirectory() + "/ATrac_backup.db";
+            File dstFile = new File(dstFileName);
+            File srcFile = mContext.getDatabasePath(DbAdapter.DATABASE_NAME);
+
+            FileChannel src = new FileInputStream(srcFile).getChannel();
+            FileChannel dst = new FileOutputStream(dstFile).getChannel();
+
+            dst.transferFrom(src, 0, src.size());
+
+            src.close();
+            dst.close();
+
+            result = true;
+
+        } catch(Exception e) {
+            e.printStackTrace();
+        }
+
+        return result;
+    }
+
 }

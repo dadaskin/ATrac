@@ -1,13 +1,15 @@
 package com.adaskin.android.atrac;
 
 import android.os.Bundle;
-import android.support.design.widget.FloatingActionButton;
-import android.support.design.widget.Snackbar;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
-import android.view.View;
 import android.view.Menu;
 import android.view.MenuItem;
+
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
+import java.util.Calendar;
+import java.util.Locale;
 
 public class DailyEntryActivity extends AppCompatActivity {
 
@@ -26,7 +28,26 @@ public class DailyEntryActivity extends AppCompatActivity {
 //                        .setAction("Action", null).show();
 //            }
 //        });
+
+
+        // Get Current Date and display it.
+        // Read DB to determine current state, set button text appropriately
+        // Set up button listener
+        // Display current days entries if any.
+
+        String today = getCurrentDateAsString();
+
+        int dummy=0;
+
     }
+
+    private String getCurrentDateAsString() {
+        DateFormat dateFormat = new SimpleDateFormat("EEEE, MMM dd, YYYY", Locale.US);
+        Calendar calendar = Calendar.getInstance();
+        return dateFormat.format(calendar);
+    }
+
+
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {

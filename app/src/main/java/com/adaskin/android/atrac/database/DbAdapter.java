@@ -23,7 +23,7 @@ public class DbAdapter {
     // Database constants
     public static final String  DATABASE_NAME = "ATrac_hours";
     public static final int DATABASE_VERSION = 1;
-    public static final String DB_VIEW_NAME = "db_view";
+    //public static final String DB_VIEW_NAME = "db_view";
 
     public static final String DAILY_ENTRY_TABLE = "daily_entry_table";
     public static final String H_ROW_ID = "hours_row_id";

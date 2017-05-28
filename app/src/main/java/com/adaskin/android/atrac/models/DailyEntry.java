@@ -42,9 +42,7 @@ public class DailyEntry implements Parcelable {
         return "TBD";
     }
 
-
     // --------- Implementation of Parcelable interface ------------
-
     // Comstructor
     private DailyEntry(Parcel in) {
         readFromParcel(in);
@@ -83,5 +81,4 @@ public class DailyEntry implements Parcelable {
             return new DailyEntry[size];
         }
     };
-
 }

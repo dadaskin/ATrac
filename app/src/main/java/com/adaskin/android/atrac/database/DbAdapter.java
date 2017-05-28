@@ -35,7 +35,7 @@ public class DbAdapter {
 
     private final Context mContext;
     private SQLiteDatabase mDb;
-    private mDbHelper mDbHelper;
+    private DbHelper mDbHelper;
 
     public DbAdapter(Context context) {
         mContext = context;

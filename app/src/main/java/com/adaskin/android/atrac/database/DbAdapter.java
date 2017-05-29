@@ -94,8 +94,7 @@ public class DbAdapter {
         return cursor;
     }
 
-    public DailyEntry fetchQuoteObjectFromId(long id) {
-        // Get elements of the Quote object
+    public DailyEntry fetchDailyEntryObjectFromId(long id) {
         Cursor cursor = fetchDailyEntryRecordFromId(id);
         return makeDailyEntryFromCursor(cursor);
     }

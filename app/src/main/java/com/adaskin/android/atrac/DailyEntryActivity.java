@@ -24,6 +24,7 @@ public class DailyEntryActivity extends AppCompatActivity {
     private Button mActionButton;
     private ButtonState mButtonState;
     private String mDateAsString;
+    private long mEntryId;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -55,8 +56,27 @@ public class DailyEntryActivity extends AppCompatActivity {
         setButtonToCurrentState(mDateAsString);
 
         // Display current days entries if any.
+        displayCurrentEntries();
 
     }
+
+    private void displayCurrentEntries() {
+        DailyEntry de = null;
+        if (mEntryId != -1) {
+            DbAdapter dbAdapter = new DbAdapter(this);
+            dbAdapter.open();
+            de = dbAdapter.fetchDailyEntryObjectFromId(mEntryId);
+            dbAdapter.close();
+        } else {
+            de = new DailyEntry(mDateAsString, Constants.TIME_NOT_YET_SET, Constants.TIME_NOT_YET_SET, Constants.TIME_NOT_YET_SET, Constants.TIME_NOT_YET_SET);
+        }
+
+        ((TextView)findViewById(R.id.startHours)).setText(de.mStartString);
+        ((TextView)findViewById(R.id.lunchHours)).setText(de.mLunchString);
+        ((TextView)findViewById(R.id.returnHours)).setText(de.mReturnString);
+        ((TextView)findViewById(R.id.stopHours)).setText(de.mStopString);
+    }
+
 
     private void createSeedData() {
         DailyEntry seed = new DailyEntry("Monday, February 11, 1963", "07:36", "11:30", "13:30", "17:05");
@@ -96,13 +116,13 @@ public class DailyEntryActivity extends AppCompatActivity {
         if (mButtonState == ButtonState.START) {
             //create new record
             DailyEntry de = new DailyEntry(mDateAsString, nowString);
-            dbAdapter.createDailyEntryRecord(de);
+            mEntryId = dbAdapter.createDailyEntryRecord(de);
+            dbAdapter.outputToCsv();   // Remove after testing
             mButtonState = ButtonState.LUNCH;
 
         }  else {
             // Update existing record
-            long id = dbAdapter.fetchDailyEntryIdFromDate(mDateAsString);
-            DailyEntry de = dbAdapter.fetchDailyEntryObjectFromId(id);
+            DailyEntry de = dbAdapter.fetchDailyEntryObjectFromId(mEntryId);
             if (mButtonState == ButtonState.LUNCH) {
                 de.mLunchString = nowString;
             }else if (mButtonState == ButtonState.RETURN) {
@@ -110,7 +130,7 @@ public class DailyEntryActivity extends AppCompatActivity {
             }else if (mButtonState == ButtonState.STOP) {
                 de.mStopString = nowString;
             }
-            dbAdapter.changeDailyEntry(id, de);
+            dbAdapter.changeDailyEntry(mEntryId, de);
         }
         mActionButton.setText(convertStateToString(mButtonState));
         dbAdapter.close();
@@ -120,10 +140,11 @@ public class DailyEntryActivity extends AppCompatActivity {
         DbAdapter dbAdapter = new DbAdapter(this);
         dbAdapter.open();
         mButtonState = ButtonState.START;
+        mEntryId = 0;
         try {
-            long todaysEntryId = dbAdapter.fetchDailyEntryIdFromDate(dateString);
-            if (todaysEntryId != -1) {
-                DailyEntry todaysEntry = dbAdapter.fetchDailyEntryObjectFromId(todaysEntryId);
+            mEntryId = dbAdapter.fetchDailyEntryIdFromDate(dateString);
+            if (mEntryId != -1) {
+                DailyEntry todaysEntry = dbAdapter.fetchDailyEntryObjectFromId(mEntryId);
                 if (todaysEntry.mStartString.equals(Constants.TIME_NOT_YET_SET))
                     mButtonState = ButtonState.START;
                 else if (todaysEntry.mLunchString.equals(Constants.TIME_NOT_YET_SET))

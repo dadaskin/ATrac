@@ -6,7 +6,6 @@ import android.database.Cursor;
 import android.database.SQLException;
 import android.database.sqlite.SQLiteDatabase;
 import android.os.Environment;
-import android.widget.Toast;
 
 import com.adaskin.android.atrac.models.DailyEntry;
 
@@ -16,7 +15,6 @@ import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.FileWriter;
 import java.io.IOException;
-import java.io.PrintWriter;
 import java.nio.channels.FileChannel;
 
 /**
@@ -26,17 +24,17 @@ import java.nio.channels.FileChannel;
 public class DbAdapter {
 
     // Database constants
-    public static final String  DATABASE_NAME = "ATrac_hours";
-    public static final int DATABASE_VERSION = 1;
+    static final String  DATABASE_NAME = "ATrac_hours";
+    static final int DATABASE_VERSION = 1;
     //public static final String DB_VIEW_NAME = "db_view";
 
-    public static final String DAILY_ENTRY_TABLE = "daily_entry_table";
-    public static final String H_ROW_ID = "hours_row_id";
-    public static final String H_DATE = "hours_date";
-    public static final String H_START = "hours_start";
-    public static final String H_LUNCH = "hours_lunch";
-    public static final String H_RETURN = "hours_return";
-    public static final String H_STOP = "hours_stop";
+    static final String DAILY_ENTRY_TABLE = "daily_entry_table";
+    static final String H_ROW_ID = "hours_row_id";
+    static final String H_DATE = "hours_date";
+    static final String H_START = "hours_start";
+    static final String H_LUNCH = "hours_lunch";
+    static final String H_RETURN = "hours_return";
+    static final String H_STOP = "hours_stop";
 
     private final Context mContext;
     private SQLiteDatabase mDb;
@@ -66,9 +64,10 @@ public class DbAdapter {
         return cv;
     }
 
-    public void createDailyEntryRecord(DailyEntry entry) {
+    public long createDailyEntryRecord(DailyEntry entry) {
         ContentValues cv = createDailyEntrysCV(entry);
-        long newRow = mDb.insert(DAILY_ENTRY_TABLE, "", cv);
+        long newId = mDb.insert(DAILY_ENTRY_TABLE, "", cv);
+        return newId;
     }
 
     public int getEntryCount() {
@@ -104,7 +103,7 @@ public class DbAdapter {
         return makeDailyEntryFromCursor(cursor);
     }
 
-    public DailyEntry makeDailyEntryFromCursor(Cursor cursor) {
+    private DailyEntry makeDailyEntryFromCursor(Cursor cursor) {
         String dateString = cursor.getString(cursor.getColumnIndex(H_DATE));
         String startString = cursor.getString(cursor.getColumnIndex(H_START));
         String lunchString = cursor.getString(cursor.getColumnIndex(H_LUNCH));
@@ -189,12 +188,13 @@ public class DbAdapter {
     }
 
     // Change to private once tested
-    public  void outputToCsv() {
+    public void outputToCsv() {
 
         String csvFileName = Environment.getExternalStorageDirectory() + "/ATrac_backup.csv";
         File csvFile = new File(csvFileName);
+        BufferedWriter writer = null;
         try {
-            BufferedWriter out = new BufferedWriter(new FileWriter(csvFile));
+            writer = new BufferedWriter(new FileWriter(csvFile));
 
             open();
             Cursor cursor = fetchAllDailyEntryRecords();
@@ -203,16 +203,18 @@ public class DbAdapter {
                 String line = de.mDateString + "," +
                         de.mStartString + "," +
                         de.mLunchString + "," +
-                        de.mReturnString + "." +
+                        de.mReturnString + "," +
                         de.mStopString + "," +
-                        de.mTotalHoursForDay;
-
-
-
+                        de.mTotalHoursForDay + "\n";
+                writer.write(line);
+                cursor.moveToNext();
             }
             close();
         } catch (IOException e) {
             e.printStackTrace();
+        } finally {
+            try {writer.flush(); writer.close();} catch (IOException e) {}
         }
+
     }
 }

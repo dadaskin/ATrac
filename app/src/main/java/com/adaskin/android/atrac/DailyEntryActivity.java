@@ -8,6 +8,7 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.adaskin.android.atrac.database.DbAdapter;
 import com.adaskin.android.atrac.models.DailyEntry;
@@ -19,6 +20,10 @@ import java.util.Calendar;
 import java.util.Locale;
 
 public class DailyEntryActivity extends AppCompatActivity {
+
+    private Button mActionButton;
+    private ButtonState mButtonState;
+    private String mDateAsString;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -36,46 +41,108 @@ public class DailyEntryActivity extends AppCompatActivity {
 //            }
 //        });
 
+        createSeedData();
 
         // Get Current Date and display it.
         TextView dateView = (TextView)findViewById(R.id.dateView);
-        String dateAsString = getCurrentDateAsString();
-        dateView.setText(dateAsString);
-
-        // Read DB to determine current state, set button text appropriately
-        setButtonToCurrentState(dateAsString);
+        mDateAsString = getCurrentDateAsString();
+        dateView.setText(mDateAsString);
 
         // Set up button listener
+        mActionButton = (Button)findViewById(R.id.actionButton);
+        mActionButton.setOnClickListener(mActionListener);
+        // Read DB to determine current state, set button text appropriately
+        setButtonToCurrentState(mDateAsString);
+
         // Display current days entries if any.
 
     }
 
+    private void createSeedData() {
+        DailyEntry seed = new DailyEntry("Monday, February 11, 1963", "07:36", "11:30", "13:30", "17:05");
+        DbAdapter dbAdapter = new DbAdapter(this);
+        dbAdapter.open();
+        dbAdapter.createDailyEntryRecord(seed);
+        int count = dbAdapter.getEntryCount();
+        Toast.makeText(this, "count: " + count, Toast.LENGTH_LONG).show();
+        dbAdapter.close();
+    }
+
+    private final View.OnClickListener mActionListener = new View.OnClickListener() {
+        @Override
+        public void onClick(View v) {
+            doAction();
+        }
+    };
+
+    private String getCurrentTimeAsString() {
+        String nowAsString = "bar";
+        try {
+            SimpleDateFormat sdf = new SimpleDateFormat("HH:mm", Locale.US);
+            Calendar now = Calendar.getInstance();
+            nowAsString = sdf.format(now.getTime());
+        } catch(Exception e){
+            e.printStackTrace();
+            String msg = "Time: " + e.getMessage();
+            Toast.makeText(this, msg, Toast.LENGTH_LONG).show();
+        }
+        return nowAsString;
+    }
+
+    public void doAction() {
+        String nowString = getCurrentTimeAsString();
+        DbAdapter dbAdapter = new DbAdapter(this);
+        dbAdapter.open();
+        if (mButtonState == ButtonState.START) {
+            //create new record
+            DailyEntry de = new DailyEntry(mDateAsString, nowString);
+            dbAdapter.createDailyEntryRecord(de);
+            mButtonState = ButtonState.LUNCH;
+
+        }  else {
+            // Update existing record
+            long id = dbAdapter.fetchDailyEntryIdFromDate(mDateAsString);
+            DailyEntry de = dbAdapter.fetchDailyEntryObjectFromId(id);
+            if (mButtonState == ButtonState.LUNCH) {
+                de.mLunchString = nowString;
+            }else if (mButtonState == ButtonState.RETURN) {
+                de.mReturnString = nowString;
+            }else if (mButtonState == ButtonState.STOP) {
+                de.mStopString = nowString;
+            }
+            dbAdapter.changeDailyEntry(id, de);
+        }
+        mActionButton.setText(convertStateToString(mButtonState));
+        dbAdapter.close();
+    }
+
     private ButtonState findCurrentButtonState(String dateString) {
         DbAdapter dbAdapter = new DbAdapter(this);
-        ButtonState state = ButtonState.WHAT;
+        dbAdapter.open();
+        mButtonState = ButtonState.START;
         try {
             long todaysEntryId = dbAdapter.fetchDailyEntryIdFromDate(dateString);
             if (todaysEntryId != -1) {
                 DailyEntry todaysEntry = dbAdapter.fetchDailyEntryObjectFromId(todaysEntryId);
                 if (todaysEntry.mStartString.equals(Constants.TIME_NOT_YET_SET))
-                    state = ButtonState.START;
+                    mButtonState = ButtonState.START;
                 else if (todaysEntry.mLunchString.equals(Constants.TIME_NOT_YET_SET))
-                    state = ButtonState.LUNCH;
+                    mButtonState = ButtonState.LUNCH;
                 else if (todaysEntry.mReturnString.equals(Constants.TIME_NOT_YET_SET))
-                    state = ButtonState.RETURN;
+                    mButtonState = ButtonState.RETURN;
                 else if (todaysEntry.mStopString.equals(Constants.TIME_NOT_YET_SET))
-                    state = ButtonState.STOP;
-                else state = ButtonState.ENTRY_COMPLETE;
+                    mButtonState = ButtonState.STOP;
+                else mButtonState = ButtonState.ENTRY_COMPLETE;
             }
             dbAdapter.close();
         } catch(Exception e){
-            state = ButtonState.WHAT;
+            mButtonState = ButtonState.START;
+            Toast.makeText(this, "findCurrentButtonState() " + e.getMessage(), Toast.LENGTH_LONG).show();
         }
-        return state;
+        return mButtonState;
     }
 
     private String convertStateToString(ButtonState state) {
-        if (state == ButtonState.WHAT) return Constants.STATE_WHAT;
         if (state == ButtonState.START) return Constants.STATE_START;
         if (state == ButtonState.LUNCH) return Constants.STATE_LUNCH;
         if (state == ButtonState.RETURN) return Constants.STATE_RETURN;
@@ -87,21 +154,24 @@ public class DailyEntryActivity extends AppCompatActivity {
         ButtonState state = findCurrentButtonState(dateString);
 
         // Set Button text or hide it
-        Button actionButton = (Button)findViewById(R.id.actionButton);
         if (state == ButtonState.ENTRY_COMPLETE)
-            actionButton.setVisibility(View.GONE);
-        else
-            actionButton.setText(convertStateToString(state));
+            mActionButton.setVisibility(View.INVISIBLE);
+        else {
+            mActionButton.setVisibility(View.VISIBLE);
+            mActionButton.setText(convertStateToString(state));
+        }
     }
 
     private String getCurrentDateAsString() {
         String todayAsString = "foo";
         try {
             SimpleDateFormat sdf = new SimpleDateFormat("EEEE, MMM dd, yyyy", Locale.US);
-           Calendar today = Calendar.getInstance();
+            Calendar today = Calendar.getInstance();
             todayAsString = sdf.format(today.getTime());
         } catch(Exception e) {
             e.printStackTrace();
+            String msg = "Date: " + e.getMessage();
+            Toast.makeText(this, msg, Toast.LENGTH_LONG).show();
         }
         return todayAsString;
     }

@@ -6,12 +6,17 @@ import android.database.Cursor;
 import android.database.SQLException;
 import android.database.sqlite.SQLiteDatabase;
 import android.os.Environment;
+import android.widget.Toast;
 
 import com.adaskin.android.atrac.models.DailyEntry;
 
+import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
+import java.io.FileWriter;
+import java.io.IOException;
+import java.io.PrintWriter;
 import java.nio.channels.FileChannel;
 
 /**
@@ -119,6 +124,7 @@ public class DbAdapter {
     }
 
     public void changeDailyEntry(long id, DailyEntry newDailyEntry) {
+        newDailyEntry.calculateTotal();
         ContentValues cv = createDailyEntrysCV(newDailyEntry);
         mDb.update(DAILY_ENTRY_TABLE,
                    cv,
@@ -171,6 +177,8 @@ public class DbAdapter {
             src.close();
             dst.close();
 
+            outputToCsv();
+
             result = true;
 
         } catch(Exception e) {
@@ -180,4 +188,31 @@ public class DbAdapter {
         return result;
     }
 
+    // Change to private once tested
+    public  void outputToCsv() {
+
+        String csvFileName = Environment.getExternalStorageDirectory() + "/ATrac_backup.csv";
+        File csvFile = new File(csvFileName);
+        try {
+            BufferedWriter out = new BufferedWriter(new FileWriter(csvFile));
+
+            open();
+            Cursor cursor = fetchAllDailyEntryRecords();
+            while (!cursor.isAfterLast()) {
+                DailyEntry de = makeDailyEntryFromCursor(cursor);
+                String line = de.mDateString + "," +
+                        de.mStartString + "," +
+                        de.mLunchString + "," +
+                        de.mReturnString + "." +
+                        de.mStopString + "," +
+                        de.mTotalHoursForDay;
+
+
+
+            }
+            close();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
 }

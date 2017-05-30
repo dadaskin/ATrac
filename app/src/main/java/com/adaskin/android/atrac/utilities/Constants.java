@@ -11,5 +11,4 @@ public class Constants {
     public static final String STATE_RETURN = "RETURN";
     public static final String STATE_STOP = "STOP";
     public static final String STATE_COMPLETE = "Hide Button";
-    public static final String STATE_WHAT = "??";
 }

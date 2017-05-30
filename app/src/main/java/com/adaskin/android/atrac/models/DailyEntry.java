@@ -3,6 +3,8 @@ package com.adaskin.android.atrac.models;
 import android.os.Parcel;
 import android.os.Parcelable;
 
+import com.adaskin.android.atrac.utilities.Constants;
+
 /**
  * Created by Dave on 5/26/2017.
  */
@@ -34,7 +36,12 @@ public class DailyEntry implements Parcelable {
         mTotalHoursForDay = calculateTotal();
     }
 
-    private String calculateTotal() {
+    public DailyEntry(String dateString,
+                      String startString) {
+        this(dateString, startString, Constants.TIME_NOT_YET_SET, Constants.TIME_NOT_YET_SET, Constants.TIME_NOT_YET_SET );
+    }
+
+    public String calculateTotal() {
         // Convert time strings to real time
         // Calculate total
         // Convert total to string and return it

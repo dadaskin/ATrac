@@ -23,8 +23,8 @@ public class DailyEntryActivity extends AppCompatActivity {
 
     private Button mActionButton;
     private ButtonState mButtonState;
-    private String mDateAsString;
     private long mEntryId;
+    private DailyEntry mDailyEntry;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -42,50 +42,77 @@ public class DailyEntryActivity extends AppCompatActivity {
 //            }
 //        });
 
-        createSeedData();
+
+        ////////////////////////// TBD //////////////////
+        // 1.  Implement calculate method
+        // 2.  Make sure that outputToCsv() will append.
+        // 3.  Style button
+        // 4.  Test somehow (inject a time service object ?)
+        //////////////////////////////////////////////////
+
+
 
         // Get Current Date and display it.
         TextView dateView = (TextView)findViewById(R.id.dateView);
-        mDateAsString = getCurrentDateAsString();
-        dateView.setText(mDateAsString);
+        String _dateAsString = getCurrentDateAsString();
+        dateView.setText(_dateAsString);
 
-        // Set up button listener
-        mActionButton = (Button)findViewById(R.id.actionButton);
-        mActionButton.setOnClickListener(mActionListener);
         // Read DB to determine current state, set button text appropriately
-        setButtonToCurrentState(mDateAsString);
-
-        // Display current days entries if any.
-        displayCurrentEntries();
-
-    }
-
-    private void displayCurrentEntries() {
-        DailyEntry de = null;
-        if (mEntryId != -1) {
+        mEntryId = findCurrentEntryId(_dateAsString);
+        mDailyEntry = null;
+        if (mEntryId > 0) {
+            mDailyEntry = findCurrentEntryObject(mEntryId);
+        } else {
+            mDailyEntry = new DailyEntry(_dateAsString);
             DbAdapter dbAdapter = new DbAdapter(this);
             dbAdapter.open();
-            de = dbAdapter.fetchDailyEntryObjectFromId(mEntryId);
+            mEntryId = dbAdapter.createDailyEntryRecord(mDailyEntry);
             dbAdapter.close();
-        } else {
-            de = new DailyEntry(mDateAsString, Constants.TIME_NOT_YET_SET, Constants.TIME_NOT_YET_SET, Constants.TIME_NOT_YET_SET, Constants.TIME_NOT_YET_SET);
         }
 
+        mActionButton = (Button)findViewById(R.id.actionButton);
+
+        setButtonToCurrentState(mDailyEntry);
+
+        // Display current days entries if any.
+        displayCurrentEntries(mDailyEntry);
+
+        // Set up button listener
+        mActionButton.setOnClickListener(mActionListener);
+    }
+
+    private void displayCurrentEntries(DailyEntry de) {
         ((TextView)findViewById(R.id.startHours)).setText(de.mStartString);
         ((TextView)findViewById(R.id.lunchHours)).setText(de.mLunchString);
         ((TextView)findViewById(R.id.returnHours)).setText(de.mReturnString);
         ((TextView)findViewById(R.id.stopHours)).setText(de.mStopString);
+        ((TextView)findViewById(R.id.totalHours)).setText(de.mTotalHoursForDay);
     }
 
-
-    private void createSeedData() {
-        DailyEntry seed = new DailyEntry("Monday, February 11, 1963", "07:36", "11:30", "13:30", "17:05");
+    private DailyEntry findCurrentEntryObject(long entryId) {
         DbAdapter dbAdapter = new DbAdapter(this);
         dbAdapter.open();
-        dbAdapter.createDailyEntryRecord(seed);
-        int count = dbAdapter.getEntryCount();
-        Toast.makeText(this, "count: " + count, Toast.LENGTH_LONG).show();
+        DailyEntry de = null;
+        try {
+            de = dbAdapter.fetchDailyEntryObjectFromId(entryId);
+        } catch(Exception e) {
+            Toast.makeText(this, "findCurrentEntryObject(): " + e.getMessage(), Toast.LENGTH_LONG).show();
+        }
         dbAdapter.close();
+        return de;
+    }
+
+    private long findCurrentEntryId(String dateString) {
+        DbAdapter dbAdapter = new DbAdapter(this);
+        dbAdapter.open();
+        long entryId = 0;
+        try {
+            entryId= dbAdapter.fetchDailyEntryIdFromDate(dateString);
+        } catch(Exception e) {
+            Toast.makeText(this, "findCurrentEntry(): " + e.getMessage(), Toast.LENGTH_LONG).show();
+        }
+        dbAdapter.close();
+        return entryId;
     }
 
     private final View.OnClickListener mActionListener = new View.OnClickListener() {
@@ -111,56 +138,44 @@ public class DailyEntryActivity extends AppCompatActivity {
 
     public void doAction() {
         String nowString = getCurrentTimeAsString();
-        DbAdapter dbAdapter = new DbAdapter(this);
-        dbAdapter.open();
-        if (mButtonState == ButtonState.START) {
-            //create new record
-            DailyEntry de = new DailyEntry(mDateAsString, nowString);
-            mEntryId = dbAdapter.createDailyEntryRecord(de);
-            dbAdapter.outputToCsv();   // Remove after testing
-            mButtonState = ButtonState.LUNCH;
 
-        }  else {
-            // Update existing record
-            DailyEntry de = dbAdapter.fetchDailyEntryObjectFromId(mEntryId);
-            if (mButtonState == ButtonState.LUNCH) {
-                de.mLunchString = nowString;
-            }else if (mButtonState == ButtonState.RETURN) {
-                de.mReturnString = nowString;
-            }else if (mButtonState == ButtonState.STOP) {
-                de.mStopString = nowString;
-            }
-            dbAdapter.changeDailyEntry(mEntryId, de);
+        if(mButtonState == ButtonState.START) {
+            mDailyEntry.mStartString = nowString;
+            mButtonState = ButtonState.LUNCH;
+        } else if (mButtonState == ButtonState.LUNCH) {
+            mDailyEntry.mLunchString = nowString;
+            mButtonState = ButtonState.RETURN;
+        }else if (mButtonState == ButtonState.RETURN) {
+            mDailyEntry.mReturnString = nowString;
+            mButtonState = ButtonState.STOP;
+        }else if (mButtonState == ButtonState.STOP) {
+            mDailyEntry.mStopString = nowString;
+            mButtonState = ButtonState.ENTRY_COMPLETE;
+            mDailyEntry.calculateTotal();
         }
         mActionButton.setText(convertStateToString(mButtonState));
+        displayCurrentEntries(mDailyEntry);
+        setButtonToCurrentState(mDailyEntry);
+
+        DbAdapter dbAdapter = new DbAdapter(this);
+        dbAdapter.open();
+        dbAdapter.changeDailyEntry(mEntryId, mDailyEntry);
+        dbAdapter.outputToCsv();
         dbAdapter.close();
     }
 
-    private ButtonState findCurrentButtonState(String dateString) {
-        DbAdapter dbAdapter = new DbAdapter(this);
-        dbAdapter.open();
-        mButtonState = ButtonState.START;
-        mEntryId = 0;
-        try {
-            mEntryId = dbAdapter.fetchDailyEntryIdFromDate(dateString);
-            if (mEntryId != -1) {
-                DailyEntry todaysEntry = dbAdapter.fetchDailyEntryObjectFromId(mEntryId);
-                if (todaysEntry.mStartString.equals(Constants.TIME_NOT_YET_SET))
-                    mButtonState = ButtonState.START;
-                else if (todaysEntry.mLunchString.equals(Constants.TIME_NOT_YET_SET))
-                    mButtonState = ButtonState.LUNCH;
-                else if (todaysEntry.mReturnString.equals(Constants.TIME_NOT_YET_SET))
-                    mButtonState = ButtonState.RETURN;
-                else if (todaysEntry.mStopString.equals(Constants.TIME_NOT_YET_SET))
-                    mButtonState = ButtonState.STOP;
-                else mButtonState = ButtonState.ENTRY_COMPLETE;
-            }
-            dbAdapter.close();
-        } catch(Exception e){
-            mButtonState = ButtonState.START;
-            Toast.makeText(this, "findCurrentButtonState() " + e.getMessage(), Toast.LENGTH_LONG).show();
-        }
-        return mButtonState;
+    private ButtonState findCurrentButtonState(DailyEntry de) {
+        ButtonState bs = ButtonState.ENTRY_COMPLETE;
+        if (de.mStartString.equals(Constants.TIME_NOT_YET_SET))
+            bs = ButtonState.START;
+        else if (de.mLunchString.equals(Constants.TIME_NOT_YET_SET))
+            bs = ButtonState.LUNCH;
+        else if (de.mReturnString.equals(Constants.TIME_NOT_YET_SET))
+            bs = ButtonState.RETURN;
+        else if (de.mStopString.equals(Constants.TIME_NOT_YET_SET))
+            bs = ButtonState.STOP;
+
+        return bs;
     }
 
     private String convertStateToString(ButtonState state) {
@@ -171,15 +186,15 @@ public class DailyEntryActivity extends AppCompatActivity {
         return Constants.STATE_COMPLETE;
     }
 
-    private void setButtonToCurrentState(String dateString) {
-        ButtonState state = findCurrentButtonState(dateString);
+    private void setButtonToCurrentState(DailyEntry de) {
+        mButtonState = findCurrentButtonState(de);
 
         // Set Button text or hide it
-        if (state == ButtonState.ENTRY_COMPLETE)
+        if (mButtonState == ButtonState.ENTRY_COMPLETE)
             mActionButton.setVisibility(View.INVISIBLE);
         else {
             mActionButton.setVisibility(View.VISIBLE);
-            mActionButton.setText(convertStateToString(state));
+            mActionButton.setText(convertStateToString(mButtonState));
         }
     }
 

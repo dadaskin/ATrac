@@ -36,9 +36,12 @@ public class DailyEntry implements Parcelable {
         mTotalHoursForDay = calculateTotal();
     }
 
-    public DailyEntry(String dateString,
-                      String startString) {
-        this(dateString, startString, Constants.TIME_NOT_YET_SET, Constants.TIME_NOT_YET_SET, Constants.TIME_NOT_YET_SET );
+    public DailyEntry(String dateString) {
+        this(dateString,
+             Constants.TIME_NOT_YET_SET,
+             Constants.TIME_NOT_YET_SET,
+             Constants.TIME_NOT_YET_SET,
+             Constants.TIME_NOT_YET_SET);
     }
 
     public String calculateTotal() {

@@ -111,6 +111,7 @@ public class DbAdapter {
         String stopString = cursor.getString(cursor.getColumnIndex(H_STOP));
 
         DailyEntry dailyEntry = new DailyEntry(dateString,startString,lunchString, returnString, stopString);
+        dailyEntry.calculateTotal();
 
         return dailyEntry;
     }

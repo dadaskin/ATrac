@@ -45,10 +45,12 @@ public class DailyEntryActivity extends AppCompatActivity {
 
 
         ////////////////////////// TBD //////////////////
-        // 1.  Implement calculate method
-        // 2.  Make sure that outputToCsv() will append.
-        // 3.  Style button
-        // 4.  Test somehow (inject a time service object ?)
+        // -  Add Menu items for export/import/read CSV
+        // -  Deploy to actual device for field test.
+        // -  Style the button to have more rounded corners.
+        // -  Place floating button closer to corner.
+        // -  Change outputToCSV to replace , with - in date.
+        // -  Add code to read CSV file and add to DB.
         //////////////////////////////////////////////////
 
 
@@ -164,6 +166,20 @@ public class DailyEntryActivity extends AppCompatActivity {
         }
     };
 
+    private String getCurrentDateAsString() {
+        String todayAsString = "foo";
+        try {
+            SimpleDateFormat sdf = new SimpleDateFormat("EEEE, MMM dd, yyyy", Locale.US);
+            Calendar today = Calendar.getInstance();
+            todayAsString = sdf.format(today.getTime());
+        } catch(Exception e) {
+            e.printStackTrace();
+            String msg = "Date: " + e.getMessage();
+            Toast.makeText(this, msg, Toast.LENGTH_LONG).show();
+        }
+        return todayAsString;
+    }
+
     private String getCurrentTimeAsString() {
         String nowAsString = "bar";
         try {
@@ -240,19 +256,28 @@ public class DailyEntryActivity extends AppCompatActivity {
         }
     }
 
-    private String getCurrentDateAsString() {
-        String todayAsString = "foo";
-        try {
-            SimpleDateFormat sdf = new SimpleDateFormat("EEEE, MMM dd, yyyy", Locale.US);
-            Calendar today = Calendar.getInstance();
-            todayAsString = sdf.format(today.getTime());
-        } catch(Exception e) {
-            e.printStackTrace();
-            String msg = "Date: " + e.getMessage();
-            Toast.makeText(this, msg, Toast.LENGTH_LONG).show();
+    public void MenuCommand(MenuItem item) {
+        int id = item.getItemId();
+        DbAdapter dbAdapter = new DbAdapter(this);
+        dbAdapter.open();
+        switch (id) {
+            case R.id.export_db:
+                dbAdapter.exportDB();
+                break;
+            case R.id.import_db:
+                dbAdapter.importDB();
+                findCurrentEntryObject(mEntryId);
+                break;
+            case R.id.read_csv:
+                Toast.makeText(this, "TBD", Toast.LENGTH_LONG).show();
+                dbAdapter.readFromCSV();
+                findCurrentEntryObject(mEntryId);
+                break;
         }
-        return todayAsString;
+        dbAdapter.close();
     }
+
+
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {

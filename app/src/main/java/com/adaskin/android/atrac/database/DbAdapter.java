@@ -10,9 +10,11 @@ import android.os.Environment;
 import com.adaskin.android.atrac.models.DailyEntry;
 
 import java.io.BufferedWriter;
+import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
+import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.nio.channels.FileChannel;
@@ -189,33 +191,54 @@ public class DbAdapter {
     }
 
     // Change to private once tested
-    public void outputToCsv() {
+    private void outputToCsv() {
 
         String csvFileName = Environment.getExternalStorageDirectory() + "/ATrac_backup.csv";
         File csvFile = new File(csvFileName);
         BufferedWriter writer = null;
         try {
             writer = new BufferedWriter(new FileWriter(csvFile));
-
-            open();
             Cursor cursor = fetchAllDailyEntryRecords();
             while (!cursor.isAfterLast()) {
                 DailyEntry de = makeDailyEntryFromCursor(cursor);
-                String line = de.mDateString + "," +
+
+                String line = de.mDateString.replace(", ", "=") + "," +
                         de.mStartString + "," +
                         de.mLunchString + "," +
                         de.mReturnString + "," +
-                        de.mStopString + "," +
-                        de.mTotalHoursForDay + "\n";
+                        de.mStopString + "\n";
                 writer.write(line);
                 cursor.moveToNext();
             }
-            close();
         } catch (IOException e) {
             e.printStackTrace();
         } finally {
             try {writer.flush(); writer.close();} catch (IOException e) {}
         }
-
     }
+
+    public void readFromCSV() {
+        String csvFileName = Environment.getExternalStorageDirectory() + "/ATrac_backup.csv";
+        File csvFile = new File(csvFileName);
+
+        BufferedReader reader = null;
+        try {
+            reader = new BufferedReader(new FileReader(csvFile));
+            String line="";
+            mDb.execSQL("DELETE from " + DbAdapter.DAILY_ENTRY_TABLE);
+            while ((line = reader.readLine()) !=null ) {
+                String[] fieldArray = line.split(",");
+                if (fieldArray.length != 5)
+                    return;
+                String dateString = fieldArray[0].replace("=", ", ");
+                DailyEntry de = new DailyEntry(dateString, fieldArray[1], fieldArray[2], fieldArray[3], fieldArray[4]);
+
+                createDailyEntryRecord(de);
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+
 }

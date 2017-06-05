@@ -19,9 +19,6 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.nio.channels.FileChannel;
 
-/**
- * Created by Dave on 5/25/2017.
- */
 
 public class DbAdapter {
 
@@ -66,18 +63,17 @@ public class DbAdapter {
         return cv;
     }
 
-    public long createDailyEntryRecord(DailyEntry entry) {
+    public void createDailyEntryRecord(DailyEntry entry) {
         ContentValues cv = createDailyEntrysCV(entry);
-        long newId = mDb.insert(DAILY_ENTRY_TABLE, "", cv);
-        return newId;
+        mDb.insert(DAILY_ENTRY_TABLE, "", cv);
     }
 
-    public int getEntryCount() {
-        Cursor cursor = mDb.rawQuery("Select * from " + DAILY_ENTRY_TABLE, null);
-        int n = cursor.getCount();
-        cursor.close();
-        return n;
-    }
+//    public int getEntryCount() {
+//        Cursor cursor = mDb.rawQuery("Select * from " + DAILY_ENTRY_TABLE, null);
+//        int n = cursor.getCount();
+//        cursor.close();
+//        return n;
+//    }
 
     public long fetchDailyEntryIdFromDate(String dateString) {
         String[] params = new String[] { dateString };
@@ -134,14 +130,8 @@ public class DbAdapter {
                    new String[] {String.valueOf(id)});
     }
 
-    public void removeDailyEntryRecord(String dateString) {
-        long id = fetchDailyEntryIdFromDate(dateString);
-        mDb.delete(DAILY_ENTRY_TABLE, H_ROW_ID + "=?", new String[] {String.valueOf(id)});
-    }
-
-    public boolean importDB()
+    public void importDB()
     {
-        boolean result = false;
         try  {
             String srcFileName = Environment.getExternalStorageDirectory() + "/ATrac_backup.db";
             File srcFile = new File(srcFileName);
@@ -153,19 +143,13 @@ public class DbAdapter {
             dst.transferFrom(src, 0, src.size());
             src.close();
             dst.close();
-
-            result = true;
-
         } catch (Exception e) {
             e.printStackTrace();
         }
-
-        return result;
     }
 
-    public boolean exportDB()
+    public void exportDB()
     {
-        boolean result = false;
         try {
             String dstFileName = Environment.getExternalStorageDirectory() + "/ATrac_backup.db";
             File dstFile = new File(dstFileName);
@@ -180,14 +164,9 @@ public class DbAdapter {
             dst.close();
 
             outputToCsv();
-
-            result = true;
-
         } catch(Exception e) {
             e.printStackTrace();
         }
-
-        return result;
     }
 
     // Change to private once tested
@@ -213,7 +192,7 @@ public class DbAdapter {
         } catch (IOException e) {
             e.printStackTrace();
         } finally {
-            try {writer.flush(); writer.close();} catch (IOException e) {}
+            try {writer.flush(); writer.close();} catch (Exception e) {}
         }
     }
 
@@ -221,10 +200,10 @@ public class DbAdapter {
         String csvFileName = Environment.getExternalStorageDirectory() + "/ATrac_backup.csv";
         File csvFile = new File(csvFileName);
 
-        BufferedReader reader = null;
+        BufferedReader reader;
         try {
             reader = new BufferedReader(new FileReader(csvFile));
-            String line="";
+            String line;
             mDb.execSQL("DELETE from " + DbAdapter.DAILY_ENTRY_TABLE);
             while ((line = reader.readLine()) !=null ) {
                 String[] fieldArray = line.split(",");

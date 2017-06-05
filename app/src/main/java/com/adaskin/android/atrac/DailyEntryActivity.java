@@ -1,7 +1,6 @@
 package com.adaskin.android.atrac;
 
 import android.os.Bundle;
-import android.support.design.widget.FloatingActionButton;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.Menu;
@@ -24,7 +23,7 @@ public class DailyEntryActivity extends AppCompatActivity {
 
     private Button mActionButton;
     private ButtonState mButtonState;
-    private long mEntryId;
+    private String mDateString;
     private DailyEntry mDailyEntry;
 
     @Override
@@ -34,7 +33,7 @@ public class DailyEntryActivity extends AppCompatActivity {
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
-        FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
+//        FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
 //        fab.setOnClickListener(new View.OnClickListener() {
 //            @Override
 //            public void onClick(View view) {
@@ -45,84 +44,91 @@ public class DailyEntryActivity extends AppCompatActivity {
 
 
         ////////////////////////// TBD //////////////////
-        // -  Add Menu items for export/import/read CSV
         // -  Deploy to actual device for field test.
+        // -  disable Undo menu item when not possible.
+        // -  Format real data to be compatable with
         // -  Style the button to have more rounded corners.
         // -  Place floating button closer to corner.
-        // -  Change outputToCSV to replace , with - in date.
-        // -  Add code to read CSV file and add to DB.
+        // -  Reduce use of member variables
         //////////////////////////////////////////////////
 
 
         // Get Current Date and display it.
         TextView dateView = (TextView)findViewById(R.id.dateView);
-        String _dateAsString = getCurrentDateAsString();
-        dateView.setText(_dateAsString);
+        mDateString = getCurrentDateAsString();
+        dateView.setText(mDateString);
 
         //testCalculations(_dateAsString);
         //testDataAccumulation();
 
-        // Read DB to determine current state, set button text appropriately
-        mEntryId = findCurrentEntryId(_dateAsString);
-        mDailyEntry = null;
-        if (mEntryId > 0) {
-            mDailyEntry = findCurrentEntryObject(mEntryId);
-        } else {
-            mDailyEntry = new DailyEntry(_dateAsString);
-            DbAdapter dbAdapter = new DbAdapter(this);
-            dbAdapter.open();
-            mEntryId = dbAdapter.createDailyEntryRecord(mDailyEntry);
-            dbAdapter.close();
-        }
-
         mActionButton = (Button)findViewById(R.id.actionButton);
 
-        setButtonToCurrentState(mDailyEntry);
-
-        // Display current days entries if any.
-        displayCurrentEntries(mDailyEntry);
+        // Read DB to determine current state, set button text appropriately
+        setCurrentStateAndDisplay(mDateString);
 
         // Set up button listener
         mActionButton.setOnClickListener(mActionListener);
     }
 
-    private void testDataAccumulation() {
-        DailyEntry de0 = new DailyEntry("Saturday, Feb 09, 1963", "7:45", "12:01", "12:55", "17:30");
-        de0.calculateTotal();
-        DailyEntry de1 = new DailyEntry("Sunday, Feb 10, 1963", "7:52", "11:51", "13:02", "17:15");
-        de1.calculateTotal();
-        DailyEntry de2 = new DailyEntry("Monday, Feb 11, 1963", "7:36", "12:07", "13:25", "17:00");
-        de2.calculateTotal();
+//    private void testDataAccumulation() {
+//        DailyEntry de0 = new DailyEntry("Saturday, Feb 09, 1963", "7:45", "12:01", "12:55", "17:30");
+//        de0.calculateTotal();
+//        DailyEntry de1 = new DailyEntry("Sunday, Feb 10, 1963", "7:52", "11:51", "13:02", "17:15");
+//        de1.calculateTotal();
+//        DailyEntry de2 = new DailyEntry("Monday, Feb 11, 1963", "7:36", "12:07", "13:25", "17:00");
+//        de2.calculateTotal();
+//
+//        DbAdapter dbAdapter = new DbAdapter(this);
+//        dbAdapter.open();
+//        dbAdapter.createDailyEntryRecord(de0);
+//        dbAdapter.createDailyEntryRecord(de1);
+//        dbAdapter.createDailyEntryRecord(de2);
+//        dbAdapter.close();
+//    }
+//
+//    private void testCalculations(String dateString) {
+//        // Test Calculations:
+//        // 1.  Nominal: 8-12, 13-17 -> 8.00
+//        DailyEntry de1 = new DailyEntry(dateString, "8:00", "12:00", "13:00", "17:00");
+//        de1.calculateTotal();
+//
+//        // 2.  Morning only:  7:23 - 11:52 -> 4.48
+//        DailyEntry de2 = new DailyEntry(dateString, "7:23", "11:52", "--:--", "--:--");
+//        de2.calculateTotal();
+//
+//        // 3.  Over 10 hours:  7:16 - 12:10, 13:05 - 20:15 -> 12.07
+//        DailyEntry de3 = new DailyEntry(dateString, "7:16", "12:10", "13:05", "20:15");
+//        de3.calculateTotal();
+//
+//        // 4. Start only:  7:49, --:--, --:--, --:--  ->  0.00
+//        DailyEntry de4 = new DailyEntry(dateString, "7:49", "--:--", "--:--", "--:--");
+//        de4.calculateTotal();
+//
+//        // 5. Start, Lunch, Return only: 7:32, 12:05, 13:10, --:--  -> 4.55
+//        DailyEntry de5 = new DailyEntry(dateString, "7:32", "12:05", "13:10", "--:--");
+//        de5.calculateTotal();
+//    }
 
-        DbAdapter dbAdapter = new DbAdapter(this);
-        dbAdapter.open();
-        dbAdapter.createDailyEntryRecord(de0);
-        dbAdapter.createDailyEntryRecord(de1);
-        dbAdapter.createDailyEntryRecord(de2);
-        dbAdapter.close();
+    private void setCurrentStateAndDisplay(String dateString) {
+        mDailyEntry = getTodaysEntryInfo(dateString);
+        setButtonToCurrentState(mDailyEntry);
+        displayCurrentEntries(mDailyEntry);
     }
 
-    private void testCalculations(String dateString) {
-        // Test Calculations:
-        // 1.  Nominal: 8-12, 13-17 -> 8.00
-        DailyEntry de1 = new DailyEntry(dateString, "8:00", "12:00", "13:00", "17:00");
-        de1.calculateTotal();
+    private DailyEntry getTodaysEntryInfo(String dateString){
+        long id = findCurrentEntryId(dateString);
+        DailyEntry de;
+        if (id > 0) {
+            de = findCurrentEntryObject(id);
+        } else {
+            de = new DailyEntry(dateString);
+            DbAdapter dbAdapter = new DbAdapter(this);
+            dbAdapter.open();
+            dbAdapter.createDailyEntryRecord(de);
+            dbAdapter.close();
+        }
 
-        // 2.  Morning only:  7:23 - 11:52 -> 4.48
-        DailyEntry de2 = new DailyEntry(dateString, "7:23", "11:52", "--:--", "--:--");
-        de2.calculateTotal();
-
-        // 3.  Over 10 hours:  7:16 - 12:10, 13:05 - 20:15 -> 12.07
-        DailyEntry de3 = new DailyEntry(dateString, "7:16", "12:10", "13:05", "20:15");
-        de3.calculateTotal();
-
-        // 4. Start only:  7:49, --:--, --:--, --:--  ->  0.00
-        DailyEntry de4 = new DailyEntry(dateString, "7:49", "--:--", "--:--", "--:--");
-        de4.calculateTotal();
-
-        // 5. Start, Lunch, Return only: 7:32, 12:05, 13:10, --:--  -> 4.55
-        DailyEntry de5 = new DailyEntry(dateString, "7:32", "12:05", "13:10", "--:--");
-        de5.calculateTotal();
+        return de;
     }
 
     private void displayCurrentEntries(DailyEntry de) {
@@ -194,7 +200,7 @@ public class DailyEntryActivity extends AppCompatActivity {
         return nowAsString;
     }
 
-    public void doAction() {
+    private void doAction() {
         String nowString = getCurrentTimeAsString();
 
         if(mButtonState == ButtonState.START) {
@@ -218,7 +224,9 @@ public class DailyEntryActivity extends AppCompatActivity {
 
         DbAdapter dbAdapter = new DbAdapter(this);
         dbAdapter.open();
-        dbAdapter.changeDailyEntry(mEntryId, mDailyEntry);
+        dbAdapter.exportDB();
+        long id = dbAdapter.fetchDailyEntryIdFromDate(mDateString);
+        dbAdapter.changeDailyEntry(id, mDailyEntry);
         dbAdapter.close();
     }
 
@@ -261,19 +269,14 @@ public class DailyEntryActivity extends AppCompatActivity {
         DbAdapter dbAdapter = new DbAdapter(this);
         dbAdapter.open();
         switch (id) {
-            case R.id.export_db:
-                dbAdapter.exportDB();
-                break;
-            case R.id.import_db:
+            case R.id.undo:
                 dbAdapter.importDB();
-                findCurrentEntryObject(mEntryId);
                 break;
             case R.id.read_csv:
-                Toast.makeText(this, "TBD", Toast.LENGTH_LONG).show();
                 dbAdapter.readFromCSV();
-                findCurrentEntryObject(mEntryId);
                 break;
         }
+        setCurrentStateAndDisplay(mDateString);
         dbAdapter.close();
     }
 

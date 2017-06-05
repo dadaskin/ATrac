@@ -34,7 +34,7 @@ public class DailyEntry implements Parcelable {
         mReturnString = returnString;
         mStopString = stopString;
 
-        mTotalHoursForDay = calculateTotal();
+        /*mTotalHoursForDay =*/ calculateTotal();
     }
 
     public DailyEntry(String dateString) {
@@ -45,7 +45,7 @@ public class DailyEntry implements Parcelable {
              Constants.TIME_NOT_YET_SET);
     }
 
-    public String calculateTotal() {
+    public /* String*/ void calculateTotal() {
         // Convert time strings to real time
         SimpleDateFormat sdf = new SimpleDateFormat("HH:mm", Locale.US);
 
@@ -79,7 +79,7 @@ public class DailyEntry implements Parcelable {
         // Convert total to string showing 2 decimal places and return it
         mTotalHoursForDay =  String.format(Locale.US, "%.2f", time_hr);
 
-        return "TBD";
+       // return "TBD";
     }
 
     // --------- Implementation of Parcelable interface ------------

@@ -1,5 +1,4 @@
 <resources>
     <string name="app_name">ATrac</string>
-    <string name="action_settings">Settings</string>
-    <string name="version_info">Build 0.0.13  04 Jun 2017</string>
+    <string name="version_info">Build 0.0.14  04 Jun 2017</string>
 </resources>

@@ -8,15 +8,9 @@
         android:title="@string/version_info"
         app:showAsAction="never" />
     <item
-        android:id="@+id/import_db"
+        android:id="@+id/undo"
         android:orderInCategory="200"
-        android:title="Import DB"
-        android:onClick="MenuCommand"
-        app:showAsAction="never" />
-    <item
-        android:id="@+id/export_db"
-        android:orderInCategory="300"
-        android:title="Export DB"
+        android:title="Undo"
         android:onClick="MenuCommand"
         app:showAsAction="never" />
     <item

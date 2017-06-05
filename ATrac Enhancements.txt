@@ -1,0 +1,10 @@
+As of Build 1.0.0  04 Jun 2017
+- Field test on real device
+- Disable Undo option when not possible.
+- Format real data to be importable
+- Style button to round corners
+- Change color/content of floating button to get to weekly view
+- Style title bar.  Change color, add icon.
+- Reduce use of member variables
+- Implement weekly view.
+- Make each entry editable.

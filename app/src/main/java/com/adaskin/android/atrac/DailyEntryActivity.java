@@ -22,6 +22,7 @@ import java.util.Locale;
 public class DailyEntryActivity extends AppCompatActivity {
 
     private Button mActionButton;
+    private Button mChangeViewButton;
     private ButtonState mButtonState;
     private String mDateString;
     private DailyEntry mDailyEntry;
@@ -33,26 +34,6 @@ public class DailyEntryActivity extends AppCompatActivity {
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
-//        FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
-//        fab.setOnClickListener(new View.OnClickListener() {
-//            @Override
-//            public void onClick(View view) {
-//                Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
-//                        .setAction("Action", null).show();
-//            }
-//        });
-
-
-        ////////////////////////// TBD //////////////////
-        // -  Deploy to actual device for field test.
-        // -  disable Undo menu item when not possible.
-        // -  Format real data to be compatable with
-        // -  Style the button to have more rounded corners.
-        // -  Place floating button closer to corner.
-        // -  Reduce use of member variables
-        //////////////////////////////////////////////////
-
-
         // Get Current Date and display it.
         TextView dateView = (TextView)findViewById(R.id.dateView);
         mDateString = getCurrentDateAsString();
@@ -62,12 +43,14 @@ public class DailyEntryActivity extends AppCompatActivity {
         //testDataAccumulation();
 
         mActionButton = (Button)findViewById(R.id.actionButton);
+        mChangeViewButton = (Button)findViewById(R.id.changeView);
 
         // Read DB to determine current state, set button text appropriately
         setCurrentStateAndDisplay(mDateString);
 
         // Set up button listener
         mActionButton.setOnClickListener(mActionListener);
+        mChangeViewButton.setOnClickListener(mChangeViewListener);
     }
 
 //    private void testDataAccumulation() {
@@ -171,6 +154,18 @@ public class DailyEntryActivity extends AppCompatActivity {
             doAction();
         }
     };
+
+    private final View.OnClickListener mChangeViewListener = new View.OnClickListener() {
+        @Override
+        public void onClick(View v) {
+            changeToWeeklyView();
+        }
+    };
+
+    private void changeToWeeklyView(){
+        // Set up intent and switch.
+    }
+
 
     private String getCurrentDateAsString() {
         String todayAsString = "foo";
@@ -279,7 +274,6 @@ public class DailyEntryActivity extends AppCompatActivity {
         setCurrentStateAndDisplay(mDateString);
         dbAdapter.close();
     }
-
 
 
     @Override

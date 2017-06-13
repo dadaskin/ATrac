@@ -83,7 +83,7 @@ public class DailyEntry implements Parcelable {
     }
 
     // --------- Implementation of Parcelable interface ------------
-    // Comstructor
+    // Constructor
     private DailyEntry(Parcel in) {
         readFromParcel(in);
     }

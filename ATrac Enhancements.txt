@@ -1,5 +1,5 @@
-As of Build 1.0.0  04 Jun 2017
-- Field test on real device
+As of Build 1.0.1  12 Jun 2017
+DONE 6/12 Field test on real device
 - Disable Undo option when not possible.
 - Format real data to be importable
 - Style button to round corners
@@ -8,3 +8,4 @@ As of Build 1.0.0  04 Jun 2017
 - Reduce use of member variables
 - Implement weekly view.
 - Make each entry editable.
+- Make Undo/Redo workflow better.

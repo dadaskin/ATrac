@@ -167,15 +167,28 @@
             app:layout_constraintRight_toRightOf="parent"
         />
 
-        <android.support.design.widget.FloatingActionButton
-            android:id="@+id/fab"
+        <Button
+            android:id="@+id/changeView"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_margin="@dimen/fab_margin"
-            app:srcCompat="@android:drawable/ic_dialog_email"
-            app:layout_constraintTop_toBottomOf="@+id/totalHours"
-            app:layout_constraintEnd_toEndOf="parent"
+            android:layout_marginLeft="20dp"
+            android:layout_marginRight="20dp"
+            android:layout_marginTop="20dp"
+            android:text="Weekly View"
+            android:textAlignment="center"
+            android:textSize="20sp"
+            android:textColor="#ff000000"
+            android:background="#5f00ff00"
+            android:paddingTop="10sp"
+            android:paddingBottom="10sp"
+            android:paddingLeft="25sp"
+            android:paddingRight="25sp"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/totalLabel"
+            app:layout_constraintRight_toRightOf="parent"
+            app:layout_constraintLeft_toLeftOf="parent"
             />
+
 </android.support.constraint.ConstraintLayout>
 
 

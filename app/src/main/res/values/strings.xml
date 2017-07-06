@@ -1,4 +1,5 @@
 <resources>
     <string name="app_name">ATrac</string>
-    <string name="version_info">Build 1.0.1  12 Jun 2017</string>
+    <string name="version_info">Build 2.0.0  05 Jul 2017</string>
+    <string name="section_format">Hello World from section %l$d</string>
 </resources>

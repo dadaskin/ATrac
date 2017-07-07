@@ -168,7 +168,7 @@ public class DailyEntryActivity extends AppCompatActivity {
         startActivity(intent);
     }
 
-    
+
     private String getCurrentDateAsString() {
         String todayAsString = "foo";
         try {

@@ -11,6 +11,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
+import android.widget.Toast;
 
 
 public class WeeklyActivity extends AppCompatActivity {
@@ -31,11 +32,6 @@ public class WeeklyActivity extends AppCompatActivity {
         mViewPager.setAdapter(mSectionsPagerAdapter);
    }
 
-
-   private void goBackToFirstPage()
-   {
-       finish();
-   }
 
    public static class PlaceholderFragment extends Fragment {
 
@@ -67,13 +63,13 @@ public class WeeklyActivity extends AppCompatActivity {
        }
 
        @Override
-       public int getCount() {
-           return 3;
+       public Fragment getItem(int position) {
+           return PlaceholderFragment.newInstance(position + 1);
        }
 
        @Override
-       public Fragment getItem(int position) {
-           return PlaceholderFragment.newInstance(position + 1);
+       public int getCount() {
+           return 3;
        }
 
        @Override

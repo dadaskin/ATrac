@@ -22,7 +22,7 @@
         </activity>
         <activity
             android:name=".WeeklyActivity"
-            android:label="ATrac"
+            android:label="@string/weekly_header"
             />
     </application>
 

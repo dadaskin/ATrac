@@ -1,11 +1,14 @@
-As of Build 1.0.1  12 Jun 2017
-DONE 6/12 Field test on real device
-- Disable Undo option when not possible.
-- Format real data to be importable
-- Style button to round corners
-- Change color/content of floating button to get to weekly view
-- Style title bar.  Change color, add icon.
-- Reduce use of member variables
-- Implement weekly view.
-- Make each entry editable.
-- Make Undo/Redo workflow better.
+As of Build 2.0.3  09 Jul 2017
+1.  DONE 06/12/17 Field test on real device
+2.       06/12/17 Disable Undo option when not possible.
+3.       06/12/17 Format real data to be importable
+4.       06/12/17 Style button to round corners
+4.       06/12/17 Change color/content of floating button to get to weekly view
+5.       06/12/17 Style title bar.  Change color, add icon.
+6.       06/12/17 Reduce use of member variables
+7.       06/12/17 Implement weekly view.
+8.       06/12/17 Make each entry editable.
+9.       06/12/17 Make Undo/Redo workflow better.
+10.      07/09/17 Put buttons on toolbar to switch between daily/weekly views
+11.      07/09/17 Make daily view toolbar show "ATrac-Daily View" instead of app_name (may need to do this dynamically).
+12.

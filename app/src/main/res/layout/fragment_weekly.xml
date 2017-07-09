@@ -8,11 +8,11 @@
     android:paddingLeft="@dimen/activity_horizontal_margin"
     android:paddingRight="@dimen/activity_horizontal_margin"
     android:paddingTop="@dimen/activity_vertical_margin"
-    tools:context="com.adaskin.android.atrac.WeeklyActivity$PlaceholderFragment"
+    tools:context="com.adaskin.android.atrac.fragments.WeekFragment"
     >
 
     <TextView
-        android:id="@+id/section_label"
+        android:id="@+id/week_section_label"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:textSize="30sp"
@@ -21,8 +21,8 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:textSize="25sp"
-        android:text="Some more text!"
-        android:layout_below="@+id/section_label"
+        android:text="Another week's data"
+        android:layout_below="@+id/week_section_label"
         />
 
 </RelativeLayout>

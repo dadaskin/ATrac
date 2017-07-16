@@ -18,6 +18,8 @@ import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.nio.channels.FileChannel;
+import java.util.ArrayList;
+import java.util.List;
 
 
 public class DbAdapter {
@@ -112,6 +114,24 @@ public class DbAdapter {
         dailyEntry.calculateTotal();
 
         return dailyEntry;
+    }
+
+    public List<DailyEntry> fetchAllDailyEntryObjects() {
+        Cursor cursor = fetchAllDailyEntryRecords();
+        ArrayList<DailyEntry> deList = new ArrayList<DailyEntry>();
+        if (cursor.isAfterLast()) {
+            cursor.close();
+            return deList;
+        }
+        try {
+            while (cursor.moveToNext()) {
+                deList.add(makeDailyEntryFromCursor(cursor));
+            }
+        } finally {
+            cursor.close();
+        }
+
+        return deList;
     }
 
     private Cursor fetchAllDailyEntryRecords() {

@@ -172,7 +172,7 @@ public class DailyEntryActivity extends AppCompatActivity {
     private String getCurrentDateAsString() {
         String todayAsString = "foo";
         try {
-            SimpleDateFormat sdf = new SimpleDateFormat("EEEE, MMM dd, yyyy", Locale.US);
+            SimpleDateFormat sdf = new SimpleDateFormat(Constants.dateFormat, Locale.US);
             Calendar today = Calendar.getInstance();
             todayAsString = sdf.format(today.getTime());
         } catch(Exception e) {
@@ -186,7 +186,7 @@ public class DailyEntryActivity extends AppCompatActivity {
     private String getCurrentTimeAsString() {
         String nowAsString = "bar";
         try {
-            SimpleDateFormat sdf = new SimpleDateFormat("HH:mm", Locale.US);
+            SimpleDateFormat sdf = new SimpleDateFormat(Constants.timeFormat, Locale.US);
             Calendar now = Calendar.getInstance();
             nowAsString = sdf.format(now.getTime());
         } catch(Exception e){

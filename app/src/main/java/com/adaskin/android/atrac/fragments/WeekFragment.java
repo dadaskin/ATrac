@@ -8,11 +8,14 @@ import android.view.ViewGroup;
 import android.widget.TextView;
 
 import com.adaskin.android.atrac.R;
+import com.adaskin.android.atrac.WeeklyActivity;
 import com.adaskin.android.atrac.models.WorkWeek;
+
 
 public class WeekFragment extends Fragment {
 
-    public static WorkWeek mWorkWeek;
+    private static String WEEK_INDEX_KEY = "weekIndexKey";
+    private static WeeklyActivity.SectionsPagerAdapter mPager;
 
     public WeekFragment() {
     }
@@ -25,9 +28,13 @@ public class WeekFragment extends Fragment {
 //        return fragment;
 //    }
 
-    public static WeekFragment newInstance(WorkWeek ww) {
+    public static WeekFragment newInstance(WeeklyActivity.SectionsPagerAdapter pager, int weekIndex) {
         WeekFragment fragment = new WeekFragment();
-        WeekFragment.mWorkWeek = ww;
+        mPager = pager;
+
+        Bundle args = new Bundle();
+        args.putInt(WEEK_INDEX_KEY, weekIndex);
+        fragment.setArguments(args);
         return fragment;
     }
 
@@ -35,8 +42,13 @@ public class WeekFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle bundle) {
         View rootView = inflater.inflate(R.layout.fragment_weekly, container, false);
         TextView textView = (TextView)rootView.findViewById(R.id.week_section_label);
+
         //textView.setText(getString(R.string.section_format, getArguments().getInt(ARG_SECTION_NUMBER)));
-        textView.setText(mWorkWeek.mStartDateString);
+
+        int weekIndex = getArguments().getInt(WEEK_INDEX_KEY);
+        WorkWeek thisWeek = mPager.mWeekCollection.get(weekIndex);
+
+        textView.setText(thisWeek.mStartDateString);
         return rootView;
     }
 }

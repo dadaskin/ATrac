@@ -43,7 +43,7 @@ public class WeeklyActivity extends AppCompatActivity {
 
        private DbAdapter mDbAdapter;
        private List<DailyEntry> mAllEntries;
-       private List<WorkWeek> mWeekCollection;
+       public List<WorkWeek> mWeekCollection;
 
        public SectionsPagerAdapter(FragmentManager fm) {
            super(fm);
@@ -54,13 +54,11 @@ public class WeeklyActivity extends AppCompatActivity {
            mDbAdapter.close();
 
            putDailyEntriesIntoWeeks();
-
-
        }
 
        @Override
-       public Fragment getItem(int position) {
-           return WeekFragment.newInstance(mWeekCollection.get(position));
+       public Fragment getItem(int weekIndex) {
+           return WeekFragment.newInstance(this, weekIndex);
        }
 
        @Override

@@ -3,7 +3,7 @@ As of Build 2.0.5  16 Jul 2017
 2.       06/12/17 Disable Undo option when not possible.
 3.  DONE 06/16/17 Format real data to be importable
 4.       06/12/17 Style button to round corners
-4.       06/12/17 Change color/content of floating button to get to weekly view
+4.  X    07/16/17 Change color/content of floating button to get to weekly view
 5.       06/12/17 Style title bar.  Change color, add icon.
 6.       06/12/17 Reduce use of member variables
 7.  ~    06/12/17 Implement weekly view.
@@ -11,4 +11,12 @@ As of Build 2.0.5  16 Jul 2017
 9.       06/12/17 Make Undo/Redo workflow better.
 10.      07/09/17 Put buttons on toolbar to switch between daily/weekly views
 11.      07/09/17 Make daily view toolbar show "ATrac-Daily View" instead of app_name (may need to do this dynamically).
-12.
+12.      07/16/17 Make weekly rows taller somehow
+13.      07/16/17 Make top line of each page say "Week of Apr 24 - Apr 28 2017".  Will a week ever span 2 years?
+14.      07/16/17 Make more space between top line and body
+15.      07/16/17 Fit another column for total hours for day
+16.      07/16/17 Add another field at the end to show total hours for week.
+17.      07/16/17 Fill in the dates properly for DEs that are blank
+18.      07/16/17 Deploy Build 2.0.7 to phone.
+19.      07/16/17 Implement overall view to show all weeks' totals on single display (scrollable)
+20.

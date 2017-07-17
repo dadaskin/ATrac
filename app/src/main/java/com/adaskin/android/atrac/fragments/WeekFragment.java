@@ -14,7 +14,11 @@ import com.adaskin.android.atrac.WeeklyActivity;
 import com.adaskin.android.atrac.models.DailyEntry;
 import com.adaskin.android.atrac.models.WorkWeek;
 
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.GregorianCalendar;
+import java.util.Locale;
 
 
 public class WeekFragment extends Fragment {
@@ -47,7 +51,7 @@ public class WeekFragment extends Fragment {
         textView.setText(thisWeek.mStartDateString);
 
         GridView gridView = (GridView)rootView.findViewById(R.id.weekly_grid);
-        ArrayAdapter<String> adapter = new ArrayAdapter<String>(this.getActivity(), android.R.layout.simple_list_item_1, thisWeekAsArrayList);
+        ArrayAdapter<String> adapter = new ArrayAdapter<>(this.getActivity(), android.R.layout.simple_list_item_1, thisWeekAsArrayList);
         gridView.setAdapter(adapter);
 
         return rootView;
@@ -66,11 +70,45 @@ public class WeekFragment extends Fragment {
     }
 
     private static void addDailyEntryToResult(ArrayList<String> list, DailyEntry de) {
-        list.add("Mon\nApr17");
-        list.add("08:00");
-        list.add("12:00");
-        list.add("13:00");
-        list.add("17:00");
+        if (de == null) {
+            handleNullDailyEntry(list);
+        } else {
+            list.add(makeDisplayDateString(de.mDateString));
+            list.add(de.mStartString);
+            list.add(de.mLunchString);
+            list.add(de.mReturnString);
+            list.add(de.mStopString);
+            // TBD: list.add(de.mTotalHoursForDay);
+        }
     }
 
+    private static void handleNullDailyEntry(ArrayList<String> list) {
+        list.add("foo\nbar 32");
+        list.add("--:--");
+        list.add("--:--");
+        list.add("--:--");
+        list.add("--:--");
+        // TBD: list.add("0.00");
+    }
+
+    private static String makeDisplayDateString(String dateString) {
+        String result = "";
+        SimpleDateFormat longFmt = new SimpleDateFormat("EEEE", Locale.US);
+        SimpleDateFormat shortFmt = new SimpleDateFormat("EEE", Locale.US);
+
+        String[] fields = dateString.split(", ");
+
+        try {
+            Calendar dayOfWeek = new GregorianCalendar();
+            dayOfWeek.setTime(longFmt.parse(fields[0]));
+            String shortDayString = shortFmt.format(dayOfWeek.getTime());
+            result += shortDayString;
+        } catch (Exception e) {
+            result += "xxx";
+        }
+
+        result += "\n" + fields[1];
+
+        return result;
+    }
 }

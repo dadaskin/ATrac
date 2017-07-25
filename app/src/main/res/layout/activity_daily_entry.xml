@@ -25,6 +25,6 @@
 
     </android.support.design.widget.AppBarLayout>
 
-    <include layout="@layout/content_daily_entry" />
+    <include layout="@layout/daily_entry_content" />
 
 </android.support.design.widget.CoordinatorLayout>

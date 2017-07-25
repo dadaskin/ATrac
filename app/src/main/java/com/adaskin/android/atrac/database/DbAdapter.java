@@ -124,6 +124,8 @@ public class DbAdapter {
             return deList;
         }
         try {
+            cursor.moveToFirst();
+            deList.add(makeDailyEntryFromCursor(cursor));
             while (cursor.moveToNext()) {
                 deList.add(makeDailyEntryFromCursor(cursor));
             }

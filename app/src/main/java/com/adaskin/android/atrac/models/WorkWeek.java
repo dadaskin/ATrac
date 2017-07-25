@@ -80,6 +80,7 @@ public class WorkWeek implements Parcelable {
     }
 
 
+
     public void calculateTotal() {
         mTotalHoursForWeek = mMonday.mTotalHoursForDay +
                              mTuesday.mTotalHoursForDay +

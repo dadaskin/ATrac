@@ -1,11 +1,5 @@
 package com.adaskin.android.atrac.utilities;
 
-import java.text.SimpleDateFormat;
-import java.util.Locale;
-
-/**
- * Created by Dave on 5/28/2017.
- */
 
 public class Constants {
     public static final String TIME_NOT_YET_SET = "--:--";
@@ -17,4 +11,6 @@ public class Constants {
 
     public static final String dateFormat = "EEEE, MMM dd, yyyy";
     public static final String timeFormat = "HH:mm";
+
+    public static final long dayInMilliseconds = 24L*60L*60L*1000L;
 }

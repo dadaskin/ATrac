@@ -14,6 +14,8 @@ import com.adaskin.android.atrac.models.WorkWeek;
 import com.adaskin.android.atrac.utilities.Constants;
 
 import java.text.SimpleDateFormat;
+import java.util.Calendar;
+import java.util.GregorianCalendar;
 import java.util.Locale;
 
 
@@ -60,7 +62,7 @@ public class DailyEntryAdapter extends BaseAdapter {
         DailyEntry de = (DailyEntry)getItem(i);
 
         TextView dateLabelView = (TextView)rowView.findViewById(R.id.date_label);
-        dateLabelView.setText(convertToShortDateString(de.mDateString));
+        dateLabelView.setText(makeDisplayDateString(de.mDateString));
 
         TextView startView = (TextView)rowView.findViewById(R.id.start_time);
         startView.setText(de.mStartString);
@@ -77,11 +79,25 @@ public class DailyEntryAdapter extends BaseAdapter {
         return rowView;
     }
 
-    private String convertToShortDateString(String dateString) {
+    private static String makeDisplayDateString(String dateString) {
+        String result = "";
+        SimpleDateFormat longFmt = new SimpleDateFormat("EEEE", Locale.US);
+        SimpleDateFormat shortFmt = new SimpleDateFormat("EEE", Locale.US);
 
-        // Do the right thing here
+        String[] fields = dateString.split(", ");
 
-        return "Mon\nFeb 28";
+        try {
+            Calendar dayOfWeek = new GregorianCalendar();
+            dayOfWeek.setTime(longFmt.parse(fields[0]));
+            String shortDayString = shortFmt.format(dayOfWeek.getTime());
+            result += shortDayString;
+        } catch (Exception e) {
+            result += "xxx";
+        }
+
+        result += "\n" + fields[1];
+
+        return result;
     }
 
 
@@ -89,34 +105,34 @@ public class DailyEntryAdapter extends BaseAdapter {
         long sundayDate = mWorkWeek.mLongWeekStartDate;
 
         DailyEntry nullEntry = new DailyEntry("tbd", "--:--", "--:--", "--:--", "--:--");
-        long dayInMilliseconds = 24L*60L*60L*1000L;
+
         SimpleDateFormat sdf = new SimpleDateFormat(Constants.dateFormat, Locale.US);
 
-        long date = sundayDate + dayInMilliseconds;
+        long date = sundayDate + Constants.dayInMilliseconds;
         if (mWorkWeek.mMonday == null) {
             nullEntry.mDateString = sdf.format(date);
             mWorkWeek.mMonday = nullEntry;
         }
 
-        date += dayInMilliseconds;
+        date += Constants.dayInMilliseconds;
         if (mWorkWeek.mTuesday == null) {
             nullEntry.mDateString = sdf.format(date);
             mWorkWeek.mTuesday = nullEntry;
         }
 
-        date += dayInMilliseconds;
+        date += Constants.dayInMilliseconds;
         if (mWorkWeek.mWednesday == null) {
             nullEntry.mDateString = sdf.format(date);
             mWorkWeek.mWednesday = nullEntry;
         }
 
-        date += dayInMilliseconds;
+        date += Constants.dayInMilliseconds;
         if (mWorkWeek.mThursday == null) {
             nullEntry.mDateString = sdf.format(date);
             mWorkWeek.mThursday = nullEntry;
         }
 
-        date += dayInMilliseconds;
+        date += Constants.dayInMilliseconds;
         if (mWorkWeek.mFriday == null) {
             nullEntry.mDateString = sdf.format(date);
             mWorkWeek.mFriday = nullEntry;

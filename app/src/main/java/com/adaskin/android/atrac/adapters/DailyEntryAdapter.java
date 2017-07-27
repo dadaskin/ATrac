@@ -1,7 +1,6 @@
 package com.adaskin.android.atrac.adapters;
 
 import android.content.Context;
-
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -15,6 +14,7 @@ import com.adaskin.android.atrac.utilities.Constants;
 
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
+import java.util.Date;
 import java.util.GregorianCalendar;
 import java.util.Locale;
 
@@ -102,40 +102,32 @@ public class DailyEntryAdapter extends BaseAdapter {
 
 
     private void adjustForEmptyDays() {
-        long sundayDate = mWorkWeek.mLongWeekStartDate;
-
-        DailyEntry nullEntry = new DailyEntry("tbd", "--:--", "--:--", "--:--", "--:--");
-
         SimpleDateFormat sdf = new SimpleDateFormat(Constants.dateFormat, Locale.US);
 
-        long date = sundayDate + Constants.dayInMilliseconds;
+        long lMon = mWorkWeek.mLongWeekStartDate + Constants.dayInMilliseconds;
+        long lTue = lMon + Constants.dayInMilliseconds;
+        long lWed = lTue + Constants.dayInMilliseconds;
+        long lThu = lWed + Constants.dayInMilliseconds;
+        long lFri = lThu + Constants.dayInMilliseconds;
+
         if (mWorkWeek.mMonday == null) {
-            nullEntry.mDateString = sdf.format(date);
-            mWorkWeek.mMonday = nullEntry;
+            mWorkWeek.mMonday = new DailyEntry(sdf.format(new Date(lMon)), "--:--", "--:--", "--:--", "--:--");
         }
 
-        date += Constants.dayInMilliseconds;
         if (mWorkWeek.mTuesday == null) {
-            nullEntry.mDateString = sdf.format(date);
-            mWorkWeek.mTuesday = nullEntry;
+            mWorkWeek.mTuesday = new DailyEntry(sdf.format(new Date(lTue)), "--:--", "--:--", "--:--", "--:--");
         }
 
-        date += Constants.dayInMilliseconds;
         if (mWorkWeek.mWednesday == null) {
-            nullEntry.mDateString = sdf.format(date);
-            mWorkWeek.mWednesday = nullEntry;
+            mWorkWeek.mWednesday = new DailyEntry(sdf.format(new Date(lWed)), "--:--", "--:--", "--:--", "--:--");
         }
 
-        date += Constants.dayInMilliseconds;
         if (mWorkWeek.mThursday == null) {
-            nullEntry.mDateString = sdf.format(date);
-            mWorkWeek.mThursday = nullEntry;
+            mWorkWeek.mThursday = new DailyEntry(sdf.format(new Date(lThu)), "--:--", "--:--", "--:--", "--:--");
         }
 
-        date += Constants.dayInMilliseconds;
         if (mWorkWeek.mFriday == null) {
-            nullEntry.mDateString = sdf.format(date);
-            mWorkWeek.mFriday = nullEntry;
+            mWorkWeek.mFriday = new DailyEntry(sdf.format(new Date(lFri)), "--:--", "--:--", "--:--", "--:--");
         }
     }
 

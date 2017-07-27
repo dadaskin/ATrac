@@ -1,4 +1,4 @@
-As of Build 2.0.9  25 Jul 2017
+As of Build 2.0.10  26 Jul 2017
 1.  DONE 06/12/17 Field test on real device
 2.       06/12/17 Disable Undo option when not possible.
 3.  DONE 06/16/17 Format real data to be importable
@@ -15,7 +15,7 @@ As of Build 2.0.9  25 Jul 2017
 13. DONE 07/25/17 Make top line of each page say "Week of Apr 24 - Apr 28 2017".  Will a week ever span 2 years?
 14. DONE 07/25/17 Make more space between top line and body
 15.      07/16/17 Fit another column/row for total hours for day (pivot table)
-16.      07/16/17 Fill in the dates properly for DEs that are blank
-17. ~    07/25/17 Deploy Build 2.0.9 to phone.
+16. DONE 07/26/17 Fill in the dates properly for DEs that are blank
+17. DONE 07/25/17 Deploy Build 2.0.9 to phone.
 18.      07/16/17 Implement overall view to show all weeks' totals on single display (scrollable)
 19.

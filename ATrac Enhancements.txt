@@ -18,4 +18,9 @@ As of Build 2.0.10  26 Jul 2017
 16. DONE 07/26/17 Fill in the dates properly for DEs that are blank
 17. DONE 07/25/17 Deploy Build 2.0.9 to phone.
 18.      07/16/17 Implement overall view to show all weeks' totals on single display (scrollable)
-19.
+19.      07/26/17 Add row for daily total
+20.      07/26/17 Add row for weekly total
+21.      07/26/17 Make sure that rows with some null entries are spaced properly
+22.      07/27/17 Display stopwatch (with seconds) during start and return states
+23. DONE 07/27/17 Reverse week order
+24.      07/27/17 Add icons to indicate side-to-side swiping.  Correct at ends of collection.

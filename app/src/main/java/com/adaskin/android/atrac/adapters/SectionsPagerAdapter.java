@@ -38,7 +38,8 @@ public class SectionsPagerAdapter extends FragmentPagerAdapter {
     @Override
     public Fragment getItem(int weekIndex) {
         Bundle args = new Bundle();
-        args.putInt(WeekFragment.WEEK_INDEX_KEY, weekIndex);
+        int max = mWeekCollection.size();
+        args.putInt(WeekFragment.WEEK_INDEX_KEY, max - weekIndex - 1);
 
         WeekFragment fragment = new WeekFragment();
         fragment.setWorkWeekCollection(mWeekCollection);
@@ -51,19 +52,6 @@ public class SectionsPagerAdapter extends FragmentPagerAdapter {
     public int getCount() {
         return  mWeekCollection.size();
     }
-
-//    @Override
-//    public CharSequence getPageTitle(int position) {
-//        switch (position) {
-//            case 0:
-//                return "SECTION 1";
-//            case 1:
-//                return "SECTION 2";
-//            case 2:
-//                return "SECTION 3";
-//        }
-//        return null;
-//    }
 
     private void putDailyEntriesIntoWeeks() {
         Calendar startDate = new GregorianCalendar(2017, 3, 23); // Months are 0-based

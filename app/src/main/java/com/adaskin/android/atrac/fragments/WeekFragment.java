@@ -6,12 +6,12 @@ import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ArrayAdapter;
 import android.widget.ListView;
 import android.widget.TextView;
 
 import com.adaskin.android.atrac.R;
 import com.adaskin.android.atrac.adapters.BoldRowAdapter;
+import com.adaskin.android.atrac.adapters.FourRowAdapter;
 import com.adaskin.android.atrac.models.DailyEntry;
 import com.adaskin.android.atrac.models.WorkWeek;
 import com.adaskin.android.atrac.utilities.Constants;
@@ -64,11 +64,11 @@ public class WeekFragment extends Fragment {
         ListView dayLabelView = (ListView)rootView.findViewById(R.id.date_line);
         BoldRowAdapter dateLineAdapter = new BoldRowAdapter(mContext, dateArray);
         dayLabelView.setAdapter(dateLineAdapter);
-//
-//        ListView timeListView = (ListView)rootView.findViewById(R.id.time_list);
-//        ArrayAdapter<String> timeListAdapter = new ArrayAdapter<>(mContext, R.layout.regular_row, timeArray);
-//        timeListView.setAdapter(timeListAdapter);
-//
+
+        ListView timeListView = (ListView)rootView.findViewById(R.id.time_list);
+        FourRowAdapter timeListAdapter = new FourRowAdapter(mContext, timeArray);
+        timeListView.setAdapter(timeListAdapter);
+
         ListView dailyTotalView = (ListView)rootView.findViewById(R.id.daily_total_line);
         BoldRowAdapter dailyTotalAdapter = new BoldRowAdapter(mContext, dailyTotalArray);
         dailyTotalView.setAdapter(dailyTotalAdapter);

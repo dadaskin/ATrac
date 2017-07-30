@@ -11,6 +11,7 @@ import android.widget.ListView;
 import android.widget.TextView;
 
 import com.adaskin.android.atrac.R;
+import com.adaskin.android.atrac.adapters.BoldRowAdapter;
 import com.adaskin.android.atrac.models.DailyEntry;
 import com.adaskin.android.atrac.models.WorkWeek;
 import com.adaskin.android.atrac.utilities.Constants;
@@ -25,37 +26,31 @@ import java.text.SimpleDateFormat;
 
 public class WeekFragment extends Fragment {
 
-    public static String WEEK_INDEX_KEY = "weekIndexKey";
+    //public static String WEEK_INDEX_KEY = "weekIndexKey";
     private Context mContext;
-    private List<WorkWeek> mWWList;
+    private WorkWeek mWW;
 
-    public WeekFragment() {}
+    public WeekFragment(){}
 
-    public void setWorkWeekCollection(List<WorkWeek> wwCollection) {
-        mWWList = wwCollection;
+    public void setWorkWeek(WorkWeek ww) {
+        mWW = ww;
     }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle state) {
-        //View rootView = inflater.inflate(R.layout.weekly_fragment, container, false);
         View rootView = inflater.inflate(R.layout.weekly_fragment1, container, false);
 
-        int weekIndex = getArguments().getInt(WEEK_INDEX_KEY);
-        WorkWeek thisWeek = mWWList.get(weekIndex);
-        adjustForEmptyDays(thisWeek);
+//        int weekIndex = getArguments().getInt(WEEK_INDEX_KEY);
+//        WorkWeek thisWeek = mWWList.get(weekIndex);
+        adjustForEmptyDays(mWW);
 
-//        TextView weeklyTitleView = (TextView)rootView.findViewById(R.id.week_section_label);
         TextView weeklyTitleView = (TextView)rootView.findViewById(R.id.week_section_label1);
-        String titleText = makeTitleString(thisWeek.mStartDateString);
+        String titleText = makeTitleString(mWW.mStartDateString);
         weeklyTitleView.setText(titleText);
 
-//        ListView listView = (ListView)rootView.findViewById(R.id.weekly_list);
-//        DailyEntryAdapter dea = new DailyEntryAdapter(mContext, thisWeek);
-//        listView.setAdapter(dea);
-
-        List<String> dateList = accumulateDateStrings(thisWeek);
-        List<String> timeList = accumulateTimeStrings(thisWeek);
-        List<String> dailyTotalList = accumulateDailyTotalStrings(thisWeek);
+        List<String> dateList = accumulateDateStrings(mWW);
+        List<String> timeList = accumulateTimeStrings(mWW);
+        List<String> dailyTotalList = accumulateDailyTotalStrings(mWW);
 
         String[] dateArray = new String[dateList.size()];
         dateArray = dateList.toArray(dateArray);
@@ -67,19 +62,20 @@ public class WeekFragment extends Fragment {
         dailyTotalArray = dailyTotalList.toArray(dailyTotalArray);
 
         ListView dayLabelView = (ListView)rootView.findViewById(R.id.date_line);
-        ArrayAdapter<String> dateLineAdapter = new ArrayAdapter<>(mContext, R.layout.bold_row, dateArray);
+        BoldRowAdapter dateLineAdapter = new BoldRowAdapter(mContext, dateArray);
         dayLabelView.setAdapter(dateLineAdapter);
-
-        ListView timeListView = (ListView)rootView.findViewById(R.id.time_list);
-        ArrayAdapter<String> timeListAdapter = new ArrayAdapter<>(mContext, R.layout.regular_row, timeArray);
-        timeListView.setAdapter(timeListAdapter);
-
+//
+//        ListView timeListView = (ListView)rootView.findViewById(R.id.time_list);
+//        ArrayAdapter<String> timeListAdapter = new ArrayAdapter<>(mContext, R.layout.regular_row, timeArray);
+//        timeListView.setAdapter(timeListAdapter);
+//
         ListView dailyTotalView = (ListView)rootView.findViewById(R.id.daily_total_line);
-        ArrayAdapter<String> dailyTotalAdapter = new ArrayAdapter<>(mContext, R.layout.bold_row, dailyTotalArray);
+        BoldRowAdapter dailyTotalAdapter = new BoldRowAdapter(mContext, dailyTotalArray);
         dailyTotalView.setAdapter(dailyTotalAdapter);
 
+
         TextView weeklyTotalView = (TextView)rootView.findViewById(R.id.weekly_total);
-        weeklyTotalView.setText(displayWeeklyTotal(thisWeek));
+        weeklyTotalView.setText(displayWeeklyTotal(mWW));
 
         return rootView;
     }

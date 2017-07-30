@@ -79,6 +79,7 @@ public class DailyEntryAdapter extends BaseAdapter {
         return rowView;
     }
 
+    // Still needed?
     private static String makeDisplayDateString(String dateString) {
         String result = "";
         SimpleDateFormat longFmt = new SimpleDateFormat("EEEE", Locale.US);

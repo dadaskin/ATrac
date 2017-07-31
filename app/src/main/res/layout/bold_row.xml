@@ -5,49 +5,54 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     >
+
     <TextView
         android:id="@+id/placeholder_field"
-        android:layout_width="wrap_content"
-        android:layout_weight="0.24"
+        android:layout_width="0sp"
+        android:layout_weight="0.15"
         android:layout_height="wrap_content"
-        android:textColor="@color/colorPrimary"
         android:textStyle="bold"
         />
+
     <TextView
         android:id="@+id/monday_label"
-        android:layout_width="wrap_content"
-        android:layout_weight="0.24"
+        android:layout_width="0sp"
+        android:layout_weight="0.17"
         android:layout_height="wrap_content"
-        android:textColor="@color/colorPrimary"
         android:textStyle="bold"
+        android:gravity="end"
         />
     <TextView
         android:id="@+id/tuesday_label"
-        android:layout_width="wrap_content"
-        android:layout_weight="0.19"
+        android:layout_width="0sp"
+        android:layout_weight="0.17"
         android:layout_height="wrap_content"
         android:textStyle="bold"
+        android:gravity="end"
         />
     <TextView
         android:id="@+id/wednesday_label"
-        android:layout_width="wrap_content"
-        android:layout_weight="0.19"
+        android:layout_width="0sp"
+        android:layout_weight="0.17"
         android:layout_height="wrap_content"
         android:textStyle="bold"
+        android:gravity="end"
         />
     <TextView
         android:id="@+id/thursday_label"
-        android:layout_width="wrap_content"
-        android:layout_weight="0.19"
+        android:layout_width="0sp"
+        android:layout_weight="0.17"
         android:layout_height="wrap_content"
         android:textStyle="bold"
+        android:gravity="end"
         />
     <TextView
         android:id="@+id/friday_label"
-        android:layout_width="wrap_content"
-        android:layout_weight="0.19"
+        android:layout_width="0sp"
+        android:layout_weight="0.17"
         android:layout_height="wrap_content"
         android:textStyle="bold"
+        android:gravity="end"
         />
 
 </LinearLayout>

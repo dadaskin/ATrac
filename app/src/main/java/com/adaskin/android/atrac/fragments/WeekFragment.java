@@ -26,7 +26,6 @@ import java.text.SimpleDateFormat;
 
 public class WeekFragment extends Fragment {
 
-    //public static String WEEK_INDEX_KEY = "weekIndexKey";
     private Context mContext;
     private WorkWeek mWW;
 
@@ -40,8 +39,6 @@ public class WeekFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle state) {
         View rootView = inflater.inflate(R.layout.weekly_fragment1, container, false);
 
-//        int weekIndex = getArguments().getInt(WEEK_INDEX_KEY);
-//        WorkWeek thisWeek = mWWList.get(weekIndex);
         adjustForEmptyDays(mWW);
 
         TextView weeklyTitleView = (TextView)rootView.findViewById(R.id.week_section_label1);
@@ -109,7 +106,7 @@ public class WeekFragment extends Fragment {
 
     private List<String>  accumulateDateStrings(WorkWeek ww) {
         List<String> resultList = new ArrayList<>();
-        resultList.add("~~");  // First row, first column is blank.
+        resultList.add("");  // First row, first column is blank.
         resultList.add(makeDisplayDateString(ww.mMonday.mDateString));
         resultList.add(makeDisplayDateString(ww.mTuesday.mDateString));
         resultList.add(makeDisplayDateString(ww.mWednesday.mDateString));
@@ -156,7 +153,7 @@ public class WeekFragment extends Fragment {
     private List<String> accumulateDailyTotalStrings(WorkWeek ww) {
         List<String> resultList = new ArrayList<>();
 
-        resultList.add("##");  // Last row, first column is blank
+        resultList.add("");  // Last row, first column is blank
         resultList.add(ww.mMonday.mTotalHoursForDay);
         resultList.add(ww.mTuesday.mTotalHoursForDay);
         resultList.add(ww.mWednesday.mTotalHoursForDay);

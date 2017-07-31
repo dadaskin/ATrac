@@ -5,42 +5,48 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     >
+
     <TextView
         android:id="@+id/timeslice_label"
-        android:layout_width="wrap_content"
-        android:layout_weight="0.24"
+        android:layout_width="0sp"
         android:layout_height="wrap_content"
-        android:textColor="@color/colorPrimary"
+        android:layout_weight="0.15"
+        android:gravity="start"
         />
+
     <TextView
         android:id="@+id/monday_time"
-        android:layout_width="wrap_content"
-        android:layout_weight="0.24"
+        android:layout_width="0sp"
+        android:layout_weight="0.17"
         android:layout_height="wrap_content"
-        android:textColor="@color/colorPrimary"
+        android:gravity="end"
         />
     <TextView
         android:id="@+id/tuesday_time"
-        android:layout_width="wrap_content"
-        android:layout_weight="0.19"
+        android:layout_width="0sp"
+        android:layout_weight="0.17"
+        android:gravity="end"
         android:layout_height="wrap_content"
         />
     <TextView
         android:id="@+id/wednesday_time"
-        android:layout_width="wrap_content"
-        android:layout_weight="0.19"
+        android:layout_width="0sp"
+        android:layout_weight="0.17"
+        android:gravity="end"
         android:layout_height="wrap_content"
         />
     <TextView
         android:id="@+id/thursday_time"
-        android:layout_width="wrap_content"
-        android:layout_weight="0.19"
+        android:layout_width="0sp"
+        android:layout_weight="0.17"
+        android:gravity="end"
         android:layout_height="wrap_content"
         />
     <TextView
         android:id="@+id/friday_time"
-        android:layout_width="wrap_content"
-        android:layout_weight="0.19"
+        android:layout_width="0sp"
+        android:layout_weight="0.17"
+        android:gravity="end"
         android:layout_height="wrap_content"
         />
 </LinearLayout>

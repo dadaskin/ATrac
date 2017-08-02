@@ -37,15 +37,12 @@ public class SectionsPagerAdapter extends FragmentPagerAdapter {
 
     @Override
     public Fragment getItem(int weekIndex) {
-        Bundle args = new Bundle();
         int max = mWeekCollection.size();
-        //int index = max - weekIndex - 1;
-        int index = weekIndex;
+        int index = max - weekIndex - 1;
 
         WeekFragment fragment = new WeekFragment();
         fragment.setWorkWeek(mWeekCollection.get(index));
         return fragment;
-
     }
 
     @Override

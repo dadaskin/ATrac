@@ -45,31 +45,17 @@ public class WeekFragment extends Fragment {
         String titleText = makeTitleString(mWW.mStartDateString);
         weeklyTitleView.setText(titleText);
 
-        List<String> dateList = accumulateDateStrings(mWW);
-        List<String> timeList = accumulateTimeStrings(mWW);
-        List<String> dailyTotalList = accumulateDailyTotalStrings(mWW);
-
-        String[] dateArray = new String[dateList.size()];
-        dateArray = dateList.toArray(dateArray);
-
-        String[] timeArray = new String[timeList.size()];
-        timeArray = timeList.toArray(timeArray);
-
-        String[] dailyTotalArray = new String[dailyTotalList.size()];
-        dailyTotalArray = dailyTotalList.toArray(dailyTotalArray);
-
         ListView dayLabelView = (ListView)rootView.findViewById(R.id.date_line);
-        BoldRowAdapter dateLineAdapter = new BoldRowAdapter(mContext, dateArray);
+        BoldRowAdapter dateLineAdapter = new BoldRowAdapter(mContext, accumulateDateStrings(mWW));
         dayLabelView.setAdapter(dateLineAdapter);
 
         ListView timeListView = (ListView)rootView.findViewById(R.id.time_list);
-        FourRowAdapter timeListAdapter = new FourRowAdapter(mContext, timeArray);
+        FourRowAdapter timeListAdapter = new FourRowAdapter(mContext, accumulateTimeStrings(mWW));
         timeListView.setAdapter(timeListAdapter);
 
         ListView dailyTotalView = (ListView)rootView.findViewById(R.id.daily_total_line);
-        BoldRowAdapter dailyTotalAdapter = new BoldRowAdapter(mContext, dailyTotalArray);
+        BoldRowAdapter dailyTotalAdapter = new BoldRowAdapter(mContext, accumulateDailyTotalStrings(mWW));
         dailyTotalView.setAdapter(dailyTotalAdapter);
-
 
         TextView weeklyTotalView = (TextView)rootView.findViewById(R.id.weekly_total);
         weeklyTotalView.setText(displayWeeklyTotal(mWW));

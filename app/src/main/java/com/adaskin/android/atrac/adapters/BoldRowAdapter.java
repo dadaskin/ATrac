@@ -9,13 +9,15 @@ import android.widget.TextView;
 
 import com.adaskin.android.atrac.R;
 
+import java.util.List;
+
 public class BoldRowAdapter extends BaseAdapter {
 
-    private String[] mData;
+    private List<String> mData;
     private LayoutInflater mInflater;
 
     // Incoming data must be String[6]
-    public BoldRowAdapter(Context context, String[] data) {
+    public BoldRowAdapter(Context context, List<String> data) {
         mData = data;
         mInflater = LayoutInflater.from(context);
     }
@@ -27,7 +29,7 @@ public class BoldRowAdapter extends BaseAdapter {
 
     @Override
     public Object getItem(int i) {
-        return mData[i];
+        return mData.get(i);
     }
 
     @Override
@@ -40,22 +42,22 @@ public class BoldRowAdapter extends BaseAdapter {
         View rowView = mInflater.inflate(R.layout.bold_row, viewGroup, false);
 
         TextView placeHolderView = (TextView)rowView.findViewById(R.id.placeholder_field);
-        placeHolderView.setText(mData[0]);
+        placeHolderView.setText(mData.get(0));
 
         TextView monView = (TextView)rowView.findViewById(R.id.monday_label);
-        monView.setText(mData[1]);
+        monView.setText(mData.get(1));
 
         TextView tueView = (TextView)rowView.findViewById(R.id.tuesday_label);
-        tueView.setText(mData[2]);
+        tueView.setText(mData.get(2));
 
         TextView wedView = (TextView)rowView.findViewById(R.id.wednesday_label);
-        wedView.setText(mData[3]);
+        wedView.setText(mData.get(3));
 
         TextView thuView = (TextView)rowView.findViewById(R.id.thursday_label);
-        thuView.setText(mData[4]);
+        thuView.setText(mData.get(4));
 
         TextView friView = (TextView)rowView.findViewById(R.id.friday_label);
-        friView.setText(mData[5]);
+        friView.setText(mData.get(5));
 
         return rowView;
     }

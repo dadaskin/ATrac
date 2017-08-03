@@ -9,13 +9,15 @@ import android.widget.TextView;
 
 import com.adaskin.android.atrac.R;
 
+import java.util.List;
+
 public class FourRowAdapter extends BaseAdapter {
 
-    private String[] mData;
+    private List<String> mData;
     private LayoutInflater mInflater;
 
     // Incoming data must be String[24]
-    public FourRowAdapter(Context context, String[] data) {
+    public FourRowAdapter(Context context, List<String> data) {
         mData = data;
         mInflater = LayoutInflater.from(context);
     }
@@ -26,7 +28,7 @@ public class FourRowAdapter extends BaseAdapter {
     }
 
     @Override
-    public Object getItem(int i) { return mData[i]; }
+    public Object getItem(int i) { return mData.get(0); }
 
     @Override
     public long getItemId(int i) { return i; }
@@ -38,22 +40,22 @@ public class FourRowAdapter extends BaseAdapter {
         int baseIndex = 6 * row;
 
         TextView timesliceView = (TextView)rowView.findViewById(R.id.timeslice_label);
-        timesliceView.setText(mData[baseIndex]);
+        timesliceView.setText(mData.get(baseIndex));
 
         TextView monTimeView = (TextView)rowView.findViewById(R.id.monday_time);
-        monTimeView.setText(mData[baseIndex+1]);
+        monTimeView.setText(mData.get(baseIndex+1));
 
         TextView tueTimeView = (TextView)rowView.findViewById(R.id.tuesday_time);
-        tueTimeView.setText(mData[baseIndex+2]);
+        tueTimeView.setText(mData.get(baseIndex+2));
 
         TextView wedTimeView = (TextView)rowView.findViewById(R.id.wednesday_time);
-        wedTimeView.setText(mData[baseIndex+3]);
+        wedTimeView.setText(mData.get(baseIndex+3));
 
         TextView thuTimeView = (TextView)rowView.findViewById(R.id.thursday_time);
-        thuTimeView.setText(mData[baseIndex+4]);
+        thuTimeView.setText(mData.get(baseIndex+4));
 
         TextView friTimeView = (TextView)rowView.findViewById(R.id.friday_time);
-        friTimeView.setText(mData[baseIndex+5]);
+        friTimeView.setText(mData.get(baseIndex+5));
 
         return rowView;
     }

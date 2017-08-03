@@ -1,4 +1,4 @@
-As of Build 2.0.10  26 Jul 2017
+As of Build 2.0.18  02 Aug 2017
 1.  DONE 06/12/17 Field test on real device
 2.       06/12/17 Disable Undo option when not possible.
 3.  DONE 06/16/17 Format real data to be importable
@@ -14,13 +14,13 @@ As of Build 2.0.10  26 Jul 2017
 12.      07/16/17 Make weekly rows taller somehow
 13. DONE 07/25/17 Make top line of each page say "Week of Apr 24 - Apr 28 2017".  Will a week ever span 2 years?
 14. DONE 07/25/17 Make more space between top line and body
-15.      07/16/17 Fit another column/row for total hours for day (pivot table)
+15. DONE 08/02/17 Fit another column/row for total hours for day (pivot table)
 16. DONE 07/26/17 Fill in the dates properly for DEs that are blank
 17. DONE 07/25/17 Deploy Build 2.0.9 to phone.
-18.      07/16/17 Implement overall view to show all weeks' totals on single display (scrollable)
-19.      07/26/17 Add row for daily total
-20.      07/26/17 Add row for weekly total
-21.      07/26/17 Make sure that rows with some null entries are spaced properly
+18. DONE 08/02/17 Implement overall view to show all weeks' totals on single display (scrollable)
+19. DONE 08/02/17 Add row for daily total
+20. DONE 08/02/17 Add row for weekly total
+21. DONE 08/02/17 Make sure that rows with some null entries are spaced properly
 22.      07/27/17 Display stopwatch (with seconds) during start and return states
 23. DONE 07/27/17 Reverse week order
 24.      07/27/17 Add icons to indicate side-to-side swiping.  Correct at ends of collection.

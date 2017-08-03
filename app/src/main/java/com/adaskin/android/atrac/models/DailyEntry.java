@@ -78,7 +78,7 @@ public class DailyEntry implements Parcelable {
         mTotalHours = total_ms/(1000.0 *60.0 * 60.0);
 
         // Convert total to string showing 2 decimal places and return it
-        mTotalHoursForDay =  String.format(Locale.US, "%.2f", mTotalHours);
+        mTotalHoursForDay =  String.format(Locale.US, "%.1f", mTotalHours);
     }
 
     // --------- Implementation of Parcelable interface ------------

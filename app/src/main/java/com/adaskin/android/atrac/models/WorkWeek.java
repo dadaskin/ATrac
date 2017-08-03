@@ -85,7 +85,7 @@ public class WorkWeek implements Parcelable {
                            mWednesday.mTotalHours +
                            mThursday.mTotalHours +
                            mFriday.mTotalHours;
-        mTotalHoursForWeek = String.format("%.2f", totalTime);
+        mTotalHoursForWeek = String.format("%.1f", totalTime);
     }
 
     // --------- Implementation of Parcelable interface ------------

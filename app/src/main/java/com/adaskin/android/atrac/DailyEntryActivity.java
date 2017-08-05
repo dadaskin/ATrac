@@ -2,6 +2,8 @@ package com.adaskin.android.atrac;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.os.Handler;
+import android.os.SystemClock;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.Menu;
@@ -23,10 +25,14 @@ import java.util.Locale;
 public class DailyEntryActivity extends AppCompatActivity {
 
     private Button mActionButton;
-    private Button mChangeViewButton;
     private ButtonState mButtonState;
     private String mDateString;
     private DailyEntry mDailyEntry;
+
+    private long msStart = 0L;
+    private long msLunch = 0L;
+    private Handler mHandler;
+    private String mDisplayString;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -44,14 +50,16 @@ public class DailyEntryActivity extends AppCompatActivity {
         //testDataAccumulation();
 
         mActionButton = (Button)findViewById(R.id.actionButton);
-        mChangeViewButton = (Button)findViewById(R.id.changeView);
+         Button changeViewButton = (Button)findViewById(R.id.changeView);
 
         // Read DB to determine current state, set button text appropriately
         setCurrentStateAndDisplay(mDateString);
 
         // Set up button listener
         mActionButton.setOnClickListener(mActionListener);
-        mChangeViewButton.setOnClickListener(mChangeViewListener);
+        changeViewButton.setOnClickListener(mChangeViewListener);
+
+        mHandler = new Handler();
     }
 
 //    private void testDataAccumulation() {
@@ -168,7 +176,6 @@ public class DailyEntryActivity extends AppCompatActivity {
         startActivity(intent);
     }
 
-
     private String getCurrentDateAsString() {
         String todayAsString = "foo";
         try {
@@ -203,17 +210,27 @@ public class DailyEntryActivity extends AppCompatActivity {
         if(mButtonState == ButtonState.START) {
             mDailyEntry.mStartString = nowString;
             mButtonState = ButtonState.LUNCH;
+            msStart = Calendar.getInstance().getTimeInMillis();
+            mHandler.postDelayed(timer, 0);
+
         } else if (mButtonState == ButtonState.LUNCH) {
             mDailyEntry.mLunchString = nowString;
             mDailyEntry.calculateTotal();
             mButtonState = ButtonState.RETURN;
+            msLunch = Calendar.getInstance().getTimeInMillis();
+            mHandler.removeCallbacks(timer);
+            mDailyEntry.mTotalHoursForDay = mDisplayString;
+
         }else if (mButtonState == ButtonState.RETURN) {
             mDailyEntry.mReturnString = nowString;
             mButtonState = ButtonState.STOP;
+            mHandler.postDelayed(timer, 0);
+
         }else if (mButtonState == ButtonState.STOP) {
             mDailyEntry.mStopString = nowString;
             mButtonState = ButtonState.ENTRY_COMPLETE;
             mDailyEntry.calculateTotal();
+            mHandler.removeCallbacks(timer);
         }
         mActionButton.setText(convertStateToString(mButtonState));
         displayCurrentEntries(mDailyEntry);
@@ -299,4 +316,24 @@ public class DailyEntryActivity extends AppCompatActivity {
 
         return super.onOptionsItemSelected(item);
     }
+
+
+    public Runnable timer = new Runnable() {
+
+        @Override
+        public void run() {
+            long msDisplay = msLunch + SystemClock.uptimeMillis() - msStart;
+
+            int seconds = (int) (msDisplay/1000);
+            int minutes = seconds/60;
+            seconds = seconds %60;
+            int hours = minutes/60;
+            minutes = minutes/60;
+
+            mDisplayString = String.format(Locale.US,"%02d:%02d:%02d", hours, minutes, seconds);
+            ((TextView)findViewById(R.id.totalHours)).setText(mDisplayString);
+
+            mHandler.postDelayed(this, 1000L);
+        }
+    };
 }

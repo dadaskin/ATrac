@@ -143,28 +143,26 @@
             app:layout_constraintRight_toRightOf="parent"
         />
 
-        <TextView
-            android:id="@+id/totalLabel"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="@dimen/total_separator_margin"
-            android:layout_marginStart="@dimen/total_left_margin"
-            android:text="Total:"
-            android:textSize="30sp"
-            app:layout_constraintTop_toBottomOf="@+id/returnLabel"
-            app:layout_constraintLeft_toLeftOf="parent"
-        />
+        <!--<TextView-->
+            <!--android:id="@+id/totalLabel"-->
+            <!--android:layout_width="wrap_content"-->
+            <!--android:layout_height="wrap_content"-->
+            <!--android:layout_marginTop="@dimen/total_separator_margin"-->
+            <!--android:layout_marginStart="@dimen/total_left_margin"-->
+            <!--android:textSize="30sp"-->
+            <!--app:layout_constraintTop_toBottomOf="@+id/returnLabel"-->
+            <!--app:layout_constraintLeft_toLeftOf="parent"-->
+        <!--/>-->
 
         <TextView
             android:id="@+id/totalHours"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginEnd="@dimen/total_right_margin"
-            android:text="8.52"
+            android:layout_marginTop="25dp"
             android:textSize="30sp"
-            app:layout_constraintTop_toTopOf="@+id/totalLabel"
-            app:layout_constraintBottom_toBottomOf="@+id/totalLabel"
+            app:layout_constraintTop_toBottomOf="@+id/stopLabel"
             app:layout_constraintRight_toRightOf="parent"
+            app:layout_constraintLeft_toLeftOf="parent"
         />
 
         <Button

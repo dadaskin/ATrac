@@ -30,9 +30,12 @@ public class DailyEntryActivity extends AppCompatActivity {
     private DailyEntry mDailyEntry;
 
     private long msStart = 0L;
+    private long msStartTick = 0L;
     private long msLunch = 0L;
+    private long msLunchTick = 0L;
+    private long msReturnTick = 0L;
     private Handler mHandler;
-    private String mDisplayString;
+    private String mDisplayString = "00:00:00";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -128,7 +131,7 @@ public class DailyEntryActivity extends AppCompatActivity {
         ((TextView)findViewById(R.id.lunchHours)).setText(de.mLunchString);
         ((TextView)findViewById(R.id.returnHours)).setText(de.mReturnString);
         ((TextView)findViewById(R.id.stopHours)).setText(de.mStopString);
-        ((TextView)findViewById(R.id.totalHours)).setText(de.mTotalHoursForDay);
+       // ((TextView)findViewById(R.id.totalHours)).setText(de.mTotalHoursForDay);
     }
 
     private DailyEntry findCurrentEntryObject(long entryId) {
@@ -211,6 +214,7 @@ public class DailyEntryActivity extends AppCompatActivity {
             mDailyEntry.mStartString = nowString;
             mButtonState = ButtonState.LUNCH;
             msStart = Calendar.getInstance().getTimeInMillis();
+            msStartTick = SystemClock.uptimeMillis();
             mHandler.postDelayed(timer, 0);
 
         } else if (mButtonState == ButtonState.LUNCH) {
@@ -218,19 +222,22 @@ public class DailyEntryActivity extends AppCompatActivity {
             mDailyEntry.calculateTotal();
             mButtonState = ButtonState.RETURN;
             msLunch = Calendar.getInstance().getTimeInMillis();
+            msLunchTick = SystemClock.uptimeMillis();
             mHandler.removeCallbacks(timer);
-            mDailyEntry.mTotalHoursForDay = mDisplayString;
+            ((TextView)findViewById(R.id.totalHours)).setText("Total: " + mDailyEntry.mTotalHoursForDay);
 
         }else if (mButtonState == ButtonState.RETURN) {
             mDailyEntry.mReturnString = nowString;
             mButtonState = ButtonState.STOP;
             mHandler.postDelayed(timer, 0);
+            msReturnTick = SystemClock.uptimeMillis();
 
         }else if (mButtonState == ButtonState.STOP) {
             mDailyEntry.mStopString = nowString;
             mButtonState = ButtonState.ENTRY_COMPLETE;
             mDailyEntry.calculateTotal();
             mHandler.removeCallbacks(timer);
+            ((TextView)findViewById(R.id.totalHours)).setText("Total: " + mDailyEntry.mTotalHoursForDay);
         }
         mActionButton.setText(convertStateToString(mButtonState));
         displayCurrentEntries(mDailyEntry);
@@ -243,6 +250,26 @@ public class DailyEntryActivity extends AppCompatActivity {
         dbAdapter.changeDailyEntry(id, mDailyEntry);
         dbAdapter.close();
     }
+
+    public Runnable timer = new Runnable() {
+
+        @Override
+        public void run() {
+            long msDisplay = SystemClock.uptimeMillis() - msReturnTick + (msLunchTick - msStartTick);
+
+            int seconds = (int) (msDisplay/1000);
+            int minutes = seconds / 60;
+            seconds = seconds % 60;
+            int hours = minutes / 60;
+            minutes = minutes % 60;
+
+            mDisplayString = String.format(Locale.US,"Total: %02d:%02d:%02d", hours, minutes, seconds);
+            ((TextView)findViewById(R.id.totalHours)).setText(mDisplayString);
+
+            mHandler.postDelayed(this, 1000L);
+        }
+    };
+
 
     private ButtonState findCurrentButtonState(DailyEntry de) {
         ButtonState bs = ButtonState.ENTRY_COMPLETE;
@@ -318,22 +345,5 @@ public class DailyEntryActivity extends AppCompatActivity {
     }
 
 
-    public Runnable timer = new Runnable() {
 
-        @Override
-        public void run() {
-            long msDisplay = msLunch + SystemClock.uptimeMillis() - msStart;
-
-            int seconds = (int) (msDisplay/1000);
-            int minutes = seconds/60;
-            seconds = seconds %60;
-            int hours = minutes/60;
-            minutes = minutes/60;
-
-            mDisplayString = String.format(Locale.US,"%02d:%02d:%02d", hours, minutes, seconds);
-            ((TextView)findViewById(R.id.totalHours)).setText(mDisplayString);
-
-            mHandler.postDelayed(this, 1000L);
-        }
-    };
 }

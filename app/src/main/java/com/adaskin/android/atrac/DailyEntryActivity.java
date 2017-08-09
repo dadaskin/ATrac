@@ -29,13 +29,10 @@ public class DailyEntryActivity extends AppCompatActivity {
     private String mDateString;
     private DailyEntry mDailyEntry;
 
-    private long msStart = 0L;
     private long msStartTick = 0L;
-    private long msLunch = 0L;
     private long msLunchTick = 0L;
     private long msReturnTick = 0L;
     private Handler mHandler;
-    private String mDisplayString = "00:00:00";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -131,7 +128,6 @@ public class DailyEntryActivity extends AppCompatActivity {
         ((TextView)findViewById(R.id.lunchHours)).setText(de.mLunchString);
         ((TextView)findViewById(R.id.returnHours)).setText(de.mReturnString);
         ((TextView)findViewById(R.id.stopHours)).setText(de.mStopString);
-       // ((TextView)findViewById(R.id.totalHours)).setText(de.mTotalHoursForDay);
     }
 
     private DailyEntry findCurrentEntryObject(long entryId) {
@@ -213,7 +209,6 @@ public class DailyEntryActivity extends AppCompatActivity {
         if(mButtonState == ButtonState.START) {
             mDailyEntry.mStartString = nowString;
             mButtonState = ButtonState.LUNCH;
-            msStart = Calendar.getInstance().getTimeInMillis();
             msStartTick = SystemClock.uptimeMillis();
             mHandler.postDelayed(timer, 0);
 
@@ -221,10 +216,10 @@ public class DailyEntryActivity extends AppCompatActivity {
             mDailyEntry.mLunchString = nowString;
             mDailyEntry.calculateTotal();
             mButtonState = ButtonState.RETURN;
-            msLunch = Calendar.getInstance().getTimeInMillis();
             msLunchTick = SystemClock.uptimeMillis();
             mHandler.removeCallbacks(timer);
-            ((TextView)findViewById(R.id.totalHours)).setText("Total: " + mDailyEntry.mTotalHoursForDay);
+            String msg = String.format(Locale.US, "Total: %s", mDailyEntry.mTotalHoursForDay);
+            ((TextView)findViewById(R.id.totalHours)).setText(msg);
 
         }else if (mButtonState == ButtonState.RETURN) {
             mDailyEntry.mReturnString = nowString;
@@ -237,7 +232,8 @@ public class DailyEntryActivity extends AppCompatActivity {
             mButtonState = ButtonState.ENTRY_COMPLETE;
             mDailyEntry.calculateTotal();
             mHandler.removeCallbacks(timer);
-            ((TextView)findViewById(R.id.totalHours)).setText("Total: " + mDailyEntry.mTotalHoursForDay);
+            String msg = String.format(Locale.US, "Total: %s", mDailyEntry.mTotalHoursForDay);
+            ((TextView)findViewById(R.id.totalHours)).setText(msg);
         }
         mActionButton.setText(convertStateToString(mButtonState));
         displayCurrentEntries(mDailyEntry);
@@ -263,8 +259,11 @@ public class DailyEntryActivity extends AppCompatActivity {
             int hours = minutes / 60;
             minutes = minutes % 60;
 
-            mDisplayString = String.format(Locale.US,"Total: %02d:%02d:%02d", hours, minutes, seconds);
-            ((TextView)findViewById(R.id.totalHours)).setText(mDisplayString);
+            double dHours = msDisplay/(1000.0 * 60.0 * 60.0);
+
+            //String displayString = String.format(Locale.US, "Total: %02d:%02d:%02d", hours, minutes, seconds);
+            String displayString = String.format(Locale.US, "Total: %.4f", dHours);
+            ((TextView)findViewById(R.id.totalHours)).setText(displayString);
 
             mHandler.postDelayed(this, 1000L);
         }
@@ -321,7 +320,6 @@ public class DailyEntryActivity extends AppCompatActivity {
         dbAdapter.close();
     }
 
-
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         // Inflate the menu; this adds items to the action bar if it is present.
@@ -343,7 +341,5 @@ public class DailyEntryActivity extends AppCompatActivity {
 
         return super.onOptionsItemSelected(item);
     }
-
-
 
 }

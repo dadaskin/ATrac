@@ -9,6 +9,7 @@ import android.support.v4.app.FragmentPagerAdapter;
 import com.adaskin.android.atrac.database.DbAdapter;
 import com.adaskin.android.atrac.fragments.WeekFragment;
 import com.adaskin.android.atrac.models.DailyEntry;
+import com.adaskin.android.atrac.models.TimeDateStringConversions;
 import com.adaskin.android.atrac.models.WorkWeek;
 
 import java.util.ArrayList;
@@ -58,13 +59,13 @@ public class SectionsPagerAdapter extends FragmentPagerAdapter {
         for (DailyEntry de : mAllEntries) {
 
             // Ignore any entries from Saturday or Sunday
-            String dayName = WorkWeek.findDayName(de.mDateString);
+            String dayName = TimeDateStringConversions.findDayName(de.mDateString);
             if (dayName.equals("Saturday") || dayName.equals("Sunday"))
                 continue;
 
             // Ignore any entries from before our start date
             long stsrtDateLong = startDate.getTimeInMillis();
-            long thisDateLong = WorkWeek.convertDateStringToLong(de.mDateString);
+            long thisDateLong = TimeDateStringConversions.convertDateStringToLong(de.mDateString);
             if (thisDateLong < stsrtDateLong)
                 continue;
 

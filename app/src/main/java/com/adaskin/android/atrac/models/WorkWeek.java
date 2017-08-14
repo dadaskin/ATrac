@@ -5,11 +5,8 @@ import android.os.Parcelable;
 
 import com.adaskin.android.atrac.utilities.Constants;
 
-import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
-import java.util.Date;
-import java.util.GregorianCalendar;
 import java.util.Locale;
 
 public class WorkWeek implements Parcelable {
@@ -39,7 +36,7 @@ public class WorkWeek implements Parcelable {
         endCalendar.add(Calendar.DATE, 7);
         long weekEndDate = endCalendar.getTimeInMillis();
 
-        long incomingDate = convertDateStringToLong(de.mDateString);
+        long incomingDate = TimeDateStringConversions.convertDateStringToLong(de.mDateString);
 
         boolean result = false;
         if ((weekStartDate < incomingDate) && (incomingDate < weekEndDate)) {
@@ -51,7 +48,7 @@ public class WorkWeek implements Parcelable {
     }
 
     private void saveCorrectDay(DailyEntry de) {
-        String dayName = findDayName(de.mDateString);
+        String dayName = TimeDateStringConversions.findDayName(de.mDateString);
         switch(dayName) {
             case "Monday": mMonday = de; break;
             case "Tuesday": mTuesday = de; break;
@@ -62,30 +59,13 @@ public class WorkWeek implements Parcelable {
         }
     }
 
-    public static String findDayName(String dateString) {
-        int idx = dateString.indexOf(",");
-        return dateString.substring(0, idx);
-    }
-
-    public static long convertDateStringToLong(String dateString) {
-        long dateInMilliseconds;
-        try {
-            Date date = new SimpleDateFormat(Constants.dateFormat, Locale.US).parse(dateString);
-            dateInMilliseconds = date.getTime();
-        } catch (ParseException ex) {
-            Calendar cal = new GregorianCalendar(1969,6,20);  // Months are 0-based
-            dateInMilliseconds = cal.getTimeInMillis();
-        }
-        return dateInMilliseconds;
-    }
-
     public void calculateTotal() {
-        double totalTime = mMonday.mTotalHours +
-                           mTuesday.mTotalHours +
-                           mWednesday.mTotalHours +
-                           mThursday.mTotalHours +
-                           mFriday.mTotalHours;
-        mTotalHoursForWeek = String.format("%.1f", totalTime);
+        double totalTime = mMonday.mTotalMinutes +
+                           mTuesday.mTotalMinutes +
+                           mWednesday.mTotalMinutes +
+                           mThursday.mTotalMinutes +
+                           mFriday.mTotalMinutes;
+        mTotalHoursForWeek = String.format(Locale.US,"%.1f", totalTime/60.0);
     }
 
     // --------- Implementation of Parcelable interface ------------

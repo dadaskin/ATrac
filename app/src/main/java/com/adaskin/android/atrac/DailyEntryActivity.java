@@ -3,9 +3,9 @@ package com.adaskin.android.atrac;
 import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
-import android.os.SystemClock;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -15,6 +15,7 @@ import android.widget.Toast;
 
 import com.adaskin.android.atrac.database.DbAdapter;
 import com.adaskin.android.atrac.models.DailyEntry;
+import com.adaskin.android.atrac.models.TimeDateStringConversions;
 import com.adaskin.android.atrac.utilities.ButtonState;
 import com.adaskin.android.atrac.utilities.Constants;
 
@@ -33,6 +34,9 @@ public class DailyEntryActivity extends AppCompatActivity {
     private long msLunchTick = 0L;
     private long msReturnTick = 0L;
     private Handler mHandler;
+    private String mNowString;
+    private long mNowLong;
+    private TextView mDailyTotalView;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -43,23 +47,28 @@ public class DailyEntryActivity extends AppCompatActivity {
 
         // Get Current Date and display it.
         TextView dateView = (TextView)findViewById(R.id.dateView);
-        mDateString = getCurrentDateAsString();
+        mDateString = TimeDateStringConversions.getCurrentDateAsString();
         dateView.setText(mDateString);
+
+        // Get Daily Total TextView
+        mDailyTotalView = (TextView)findViewById(R.id.totalHours);
 
         //testCalculations(_dateAsString);
         //testDataAccumulation();
 
         mActionButton = (Button)findViewById(R.id.actionButton);
-         Button changeViewButton = (Button)findViewById(R.id.changeView);
+        Button changeViewButton = (Button)findViewById(R.id.changeView);
+
+        mHandler = new Handler();
 
         // Read DB to determine current state, set button text appropriately
         setCurrentStateAndDisplay(mDateString);
+        String msg = String.format(Locale.US, "onCreate(): sta:%d lun:%d rtn:%d", msStartTick, msLunchTick, msReturnTick);
+        Log.d("LC", msg);
 
         // Set up button listener
         mActionButton.setOnClickListener(mActionListener);
         changeViewButton.setOnClickListener(mChangeViewListener);
-
-        mHandler = new Handler();
     }
 
 //    private void testDataAccumulation() {
@@ -101,10 +110,24 @@ public class DailyEntryActivity extends AppCompatActivity {
 //        de5.calculateTotal();
 //    }
 
+    @Override
+    protected void onPause()     {
+        super.onPause();
+        Log.d("LC", "onPause");
+        mHandler.removeCallbacks(timer);
+    }
+
     private void setCurrentStateAndDisplay(String dateString) {
         mDailyEntry = getTodaysEntryInfo(dateString);
         setButtonToCurrentState(mDailyEntry);
         displayCurrentEntries(mDailyEntry);
+
+        if ((mButtonState == ButtonState.LUNCH) || (mButtonState == ButtonState.STOP)) {
+            msStartTick = TimeDateStringConversions.restoreTicks(mDailyEntry.mDateString, mDailyEntry.mStartString);
+            if (mButtonState == ButtonState.STOP)
+                msReturnTick = TimeDateStringConversions.restoreTicks(mDailyEntry.mDateString, mDailyEntry.mReturnString);
+            mHandler.postDelayed(timer, 1000L);
+        }
     }
 
     private DailyEntry getTodaysEntryInfo(String dateString){
@@ -119,7 +142,6 @@ public class DailyEntryActivity extends AppCompatActivity {
             dbAdapter.createDailyEntryRecord(de);
             dbAdapter.close();
         }
-
         return de;
     }
 
@@ -158,16 +180,12 @@ public class DailyEntryActivity extends AppCompatActivity {
 
     private final View.OnClickListener mActionListener = new View.OnClickListener() {
         @Override
-        public void onClick(View v) {
-            doAction();
-        }
+        public void onClick(View v) {  doAction();  }
     };
 
     private final View.OnClickListener mChangeViewListener = new View.OnClickListener() {
         @Override
-        public void onClick(View v) {
-            changeToWeeklyView();
-        }
+        public void onClick(View v) { changeToWeeklyView(); }
     };
 
     private void changeToWeeklyView(){
@@ -175,65 +193,47 @@ public class DailyEntryActivity extends AppCompatActivity {
         startActivity(intent);
     }
 
-    private String getCurrentDateAsString() {
-        String todayAsString = "foo";
-        try {
-            SimpleDateFormat sdf = new SimpleDateFormat(Constants.dateFormat, Locale.US);
-            Calendar today = Calendar.getInstance();
-            todayAsString = sdf.format(today.getTime());
-        } catch(Exception e) {
-            e.printStackTrace();
-            String msg = "Date: " + e.getMessage();
-            Toast.makeText(this, msg, Toast.LENGTH_LONG).show();
-        }
-        return todayAsString;
-    }
-
-    private String getCurrentTimeAsString() {
-        String nowAsString = "bar";
+    private void getCurrentTime() {
         try {
             SimpleDateFormat sdf = new SimpleDateFormat(Constants.timeFormat, Locale.US);
             Calendar now = Calendar.getInstance();
-            nowAsString = sdf.format(now.getTime());
+            mNowString = sdf.format(now.getTime());
+            mNowLong = now.getTimeInMillis();
+
         } catch(Exception e){
             e.printStackTrace();
             String msg = "Time: " + e.getMessage();
             Toast.makeText(this, msg, Toast.LENGTH_LONG).show();
         }
-        return nowAsString;
     }
 
     private void doAction() {
-        String nowString = getCurrentTimeAsString();
+        getCurrentTime();
 
         if(mButtonState == ButtonState.START) {
-            mDailyEntry.mStartString = nowString;
+            mDailyEntry.mStartString = mNowString;
             mButtonState = ButtonState.LUNCH;
-            msStartTick = SystemClock.uptimeMillis();
+            msStartTick = mNowLong;
             mHandler.postDelayed(timer, 0);
 
         } else if (mButtonState == ButtonState.LUNCH) {
-            mDailyEntry.mLunchString = nowString;
-            mDailyEntry.calculateTotal();
+            mDailyEntry.mLunchString = mNowString;
             mButtonState = ButtonState.RETURN;
-            msLunchTick = SystemClock.uptimeMillis();
+            msLunchTick = mNowLong;
             mHandler.removeCallbacks(timer);
-            String msg = String.format(Locale.US, "Total: %s", mDailyEntry.mTotalHoursForDay);
-            ((TextView)findViewById(R.id.totalHours)).setText(msg);
+            displayDailyTotal(mDailyEntry);
 
         }else if (mButtonState == ButtonState.RETURN) {
-            mDailyEntry.mReturnString = nowString;
+            mDailyEntry.mReturnString = mNowString;
             mButtonState = ButtonState.STOP;
             mHandler.postDelayed(timer, 0);
-            msReturnTick = SystemClock.uptimeMillis();
+            msReturnTick = mNowLong;
 
         }else if (mButtonState == ButtonState.STOP) {
-            mDailyEntry.mStopString = nowString;
+            mDailyEntry.mStopString = mNowString;
             mButtonState = ButtonState.ENTRY_COMPLETE;
-            mDailyEntry.calculateTotal();
             mHandler.removeCallbacks(timer);
-            String msg = String.format(Locale.US, "Total: %s", mDailyEntry.mTotalHoursForDay);
-            ((TextView)findViewById(R.id.totalHours)).setText(msg);
+            displayDailyTotal(mDailyEntry);
         }
         mActionButton.setText(convertStateToString(mButtonState));
         displayCurrentEntries(mDailyEntry);
@@ -247,23 +247,34 @@ public class DailyEntryActivity extends AppCompatActivity {
         dbAdapter.close();
     }
 
+    private void displayDailyTotal(DailyEntry de) {
+        de.calculateTotal();
+
+        int hours = (int)(de.mTotalMinutes) / 60;
+        int minutes = (int)de.mTotalMinutes % 60;
+
+        String displayString = String.format(Locale.US, "Total: %02d:%02d", hours, minutes);
+        mDailyTotalView.setText(displayString);
+    }
+
     public Runnable timer = new Runnable() {
 
         @Override
         public void run() {
-            long msDisplay = SystemClock.uptimeMillis() - msReturnTick + (msLunchTick - msStartTick);
+            getCurrentTime();
+            String msg = String.format("Now: %d", mNowLong);
+            Log.d("LC", msg);
+            long msElapsed = mNowLong - msReturnTick + (msLunchTick - msStartTick);
 
-            int seconds = (int) (msDisplay/1000);
+            int seconds = (int) (msElapsed/1000);
             int minutes = seconds / 60;
             seconds = seconds % 60;
             int hours = minutes / 60;
             minutes = minutes % 60;
 
-            double dHours = msDisplay/(1000.0 * 60.0 * 60.0);
-
-            //String displayString = String.format(Locale.US, "Total: %02d:%02d:%02d", hours, minutes, seconds);
-            String displayString = String.format(Locale.US, "Total: %.4f", dHours);
-            ((TextView)findViewById(R.id.totalHours)).setText(displayString);
+            String displayString = String.format(Locale.US, "Total: %02d:%02d:%02d", hours, minutes, seconds);
+            Log.d("LC", displayString);
+            mDailyTotalView.setText(displayString);
 
             mHandler.postDelayed(this, 1000L);
         }

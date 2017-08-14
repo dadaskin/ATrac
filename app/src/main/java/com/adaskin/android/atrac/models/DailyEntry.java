@@ -21,7 +21,7 @@ public class DailyEntry implements Parcelable {
 
     // Calculated Fields
     public String mTotalHoursForDay;
-    public double mTotalHours;
+    public double mTotalMinutes;
 
     // ---------- Constructors -------------
     public DailyEntry(String dateString,
@@ -57,8 +57,10 @@ public class DailyEntry implements Parcelable {
         try {
             startTime = sdf.parse(mStartString);
             lunchTime = sdf.parse(mLunchString);
-            returnTime = sdf.parse(mReturnString);
-            stopTime = sdf.parse(mStopString);
+            if (!mReturnString.equals(Constants.TIME_NOT_YET_SET)) {
+                returnTime = sdf.parse(mReturnString);
+                stopTime = sdf.parse(mStopString);
+            }
         } catch (Exception e) {
             e.getStackTrace();
         }
@@ -75,10 +77,10 @@ public class DailyEntry implements Parcelable {
 
         long total_ms = morning_ms + afternoon_ms;
 
-        mTotalHours = total_ms/(1000.0 *60.0 * 60.0);
+        mTotalMinutes = total_ms/(1000.0 * 60.0);
 
-        // Convert total to string showing 2 decimal places and return it
-        mTotalHoursForDay =  String.format(Locale.US, "%.1f", mTotalHours);
+        // Convert total to string showing 1 decimal place
+        mTotalHoursForDay =  String.format(Locale.US, "%.1f", mTotalMinutes/60.0);
     }
 
     // --------- Implementation of Parcelable interface ------------

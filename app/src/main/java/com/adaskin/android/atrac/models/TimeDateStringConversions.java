@@ -39,6 +39,16 @@ public class TimeDateStringConversions {
         return timeInMilliseconds;
     }
 
+    public static String convertLongToHMS(long msTime) {
+        int seconds = (int)(msTime/1000.0);
+        int minutes = seconds / 60;
+        seconds = seconds % 60;
+        int hours = minutes / 60;
+        minutes = minutes % 60;
+        hours = hours % 24;
+        return String.format(Locale.US, "%02d:%02d:%02d", hours, minutes, seconds);
+    }
+
     public static String findDayName(String dateString) {
         int idx = dateString.indexOf(",");
         return dateString.substring(0, idx);
@@ -47,7 +57,7 @@ public class TimeDateStringConversions {
     public static long restoreTicks(String dateString, String timeString) {
         long dateLong = convertDateStringToLong(dateString);
         long timeLong = convertTimeStringToLong(timeString);
-        String msg = String.format(Locale.US, "Date: %d  Time: %d", dateLong, timeLong);
+        String msg = String.format(Locale.US, "restoreTicks(): Date: %d  Time: %d (%s)", dateLong, timeLong, convertLongToHMS(timeLong));
         Log.d("LC", msg);
         return dateLong + timeLong;
     }

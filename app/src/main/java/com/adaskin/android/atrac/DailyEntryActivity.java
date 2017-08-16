@@ -22,6 +22,7 @@ import com.adaskin.android.atrac.utilities.Constants;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Locale;
+import java.util.TimeZone;
 
 public class DailyEntryActivity extends AppCompatActivity {
 
@@ -37,6 +38,7 @@ public class DailyEntryActivity extends AppCompatActivity {
     private String mNowString;
     private long mNowLong;
     private TextView mDailyTotalView;
+    private long mTimeZoneOffset;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -44,6 +46,8 @@ public class DailyEntryActivity extends AppCompatActivity {
         setContentView(R.layout.activity_daily_entry);
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
+
+        mTimeZoneOffset = TimeZone.getDefault().getRawOffset();
 
         // Get Current Date and display it.
         TextView dateView = (TextView)findViewById(R.id.dateView);
@@ -196,9 +200,10 @@ public class DailyEntryActivity extends AppCompatActivity {
     private void getCurrentTime() {
         try {
             SimpleDateFormat sdf = new SimpleDateFormat(Constants.timeFormat, Locale.US);
+
             Calendar now = Calendar.getInstance();
             mNowString = sdf.format(now.getTime());
-            mNowLong = now.getTimeInMillis();
+            mNowLong = now.getTimeInMillis() - mTimeZoneOffset;
 
         } catch(Exception e){
             e.printStackTrace();
@@ -262,18 +267,8 @@ public class DailyEntryActivity extends AppCompatActivity {
         @Override
         public void run() {
             getCurrentTime();
-            String msg = String.format("Now: %d", mNowLong);
-            Log.d("LC", msg);
             long msElapsed = mNowLong - msReturnTick + (msLunchTick - msStartTick);
-
-            int seconds = (int) (msElapsed/1000);
-            int minutes = seconds / 60;
-            seconds = seconds % 60;
-            int hours = minutes / 60;
-            minutes = minutes % 60;
-
-            String displayString = String.format(Locale.US, "Total: %02d:%02d:%02d", hours, minutes, seconds);
-            Log.d("LC", displayString);
+            String displayString = "Total: " + TimeDateStringConversions.convertLongToHMS(msElapsed);
             mDailyTotalView.setText(displayString);
 
             mHandler.postDelayed(this, 1000L);

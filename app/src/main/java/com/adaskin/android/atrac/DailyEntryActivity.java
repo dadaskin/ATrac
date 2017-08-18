@@ -31,9 +31,9 @@ public class DailyEntryActivity extends AppCompatActivity {
     private String mDateString;
     private DailyEntry mDailyEntry;
 
-    private long msStartTick = 0L;
-    private long msLunchTick = 0L;
-    private long msReturnTick = 0L;
+    private long msStartTick; // = 0L;
+    private long msLunchTick; // = 0L;
+    private long msReturnTick; // = 0L;
     private Handler mHandler;
     private String mNowString;
     private long mNowLong;
@@ -126,12 +126,24 @@ public class DailyEntryActivity extends AppCompatActivity {
         setButtonToCurrentState(mDailyEntry);
         displayCurrentEntries(mDailyEntry);
 
-        if ((mButtonState == ButtonState.LUNCH) || (mButtonState == ButtonState.STOP)) {
+        if (mDailyEntry.mStartString != Constants.TIME_NOT_YET_SET)
             msStartTick = TimeDateStringConversions.restoreTicks(mDailyEntry.mDateString, mDailyEntry.mStartString);
-            if (mButtonState == ButtonState.STOP)
-                msReturnTick = TimeDateStringConversions.restoreTicks(mDailyEntry.mDateString, mDailyEntry.mReturnString);
+
+        if (mDailyEntry.mLunchString != Constants.TIME_NOT_YET_SET)
+            msLunchTick = TimeDateStringConversions.restoreTicks(mDailyEntry.mDateString, mDailyEntry.mLunchString);
+
+        if (mDailyEntry.mReturnString != Constants.TIME_NOT_YET_SET)
+            msReturnTick = TimeDateStringConversions.restoreTicks(mDailyEntry.mDateString, mDailyEntry.mReturnString);
+
+        if ((mButtonState == ButtonState.LUNCH)|| (mButtonState == ButtonState.STOP))
             mHandler.postDelayed(timer, 1000L);
-        }
+
+//        if ((mButtonState == ButtonState.LUNCH) || (mButtonState == ButtonState.STOP)) {
+//            msStartTick = TimeDateStringConversions.restoreTicks(mDailyEntry.mDateString, mDailyEntry.mStartString);
+//            if (mButtonState == ButtonState.STOP)
+//                msReturnTick = TimeDateStringConversions.restoreTicks(mDailyEntry.mDateString, mDailyEntry.mReturnString);
+//            mHandler.postDelayed(timer, 1000L);
+//        }
     }
 
     private DailyEntry getTodaysEntryInfo(String dateString){

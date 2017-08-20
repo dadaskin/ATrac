@@ -1,4 +1,4 @@
-As of Build 2.0.18  02 Aug 2017
+As of Build 2.1.6  19 Aug 2017
 1.  DONE 06/12/17 Field test on real device
 2.       06/12/17 Disable Undo option when not possible.
 3.  DONE 06/16/17 Format real data to be importable
@@ -21,6 +21,7 @@ As of Build 2.0.18  02 Aug 2017
 19. DONE 08/02/17 Add row for daily total
 20. DONE 08/02/17 Add row for weekly total
 21. DONE 08/02/17 Make sure that rows with some null entries are spaced properly
-22.      07/27/17 Display stopwatch (with seconds) during start and return states
+22. DONE 08/17/17 Display stopwatch (with seconds) during start and return states
 23. DONE 07/27/17 Reverse week order
 24.      07/27/17 Add icons to indicate side-to-side swiping.  Correct at ends of collection.
+25. DONE 08/19/17 Fix bug where stopwatch does not restart after display is power cycled.

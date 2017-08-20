@@ -65,10 +65,7 @@ public class DailyEntryActivity extends AppCompatActivity {
 
         mHandler = new Handler();
 
-        // Read DB to determine current state, set button text appropriately
-        setCurrentStateAndDisplay(mDateString);
-        String msg = String.format(Locale.US, "onCreate(): sta:%d lun:%d rtn:%d", msStartTick, msLunchTick, msReturnTick);
-        Log.d("LC", msg);
+
 
         // Set up button listener
         mActionButton.setOnClickListener(mActionListener);
@@ -117,8 +114,42 @@ public class DailyEntryActivity extends AppCompatActivity {
     @Override
     protected void onPause()     {
         super.onPause();
-        Log.d("LC", "onPause");
+        Log.d("LC", "onPause()");
         mHandler.removeCallbacks(timer);
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        Log.d("LC", "onResume()");
+        // Read DB to determine current state, set button text appropriately
+        setCurrentStateAndDisplay(mDateString);
+        String msg = String.format(Locale.US, "onCreate(): sta:%d lun:%d rtn:%d", msStartTick, msLunchTick, msReturnTick);
+        Log.d("LC", msg);
+    }
+
+    @Override
+    protected void onRestart() {
+        super.onRestart();
+        Log.d("LC", "onRestart()");
+    }
+
+    @Override
+    protected void onStart() {
+        super.onStart();
+        Log.d("LC", "onStart()");
+    }
+
+    @Override
+    protected void onStop() {
+        super.onStop();
+        Log.d("LC", "onStop()");
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        Log.d("LC", "onDestroy()");
     }
 
     private void setCurrentStateAndDisplay(String dateString) {
@@ -137,13 +168,6 @@ public class DailyEntryActivity extends AppCompatActivity {
 
         if ((mButtonState == ButtonState.LUNCH)|| (mButtonState == ButtonState.STOP))
             mHandler.postDelayed(timer, 1000L);
-
-//        if ((mButtonState == ButtonState.LUNCH) || (mButtonState == ButtonState.STOP)) {
-//            msStartTick = TimeDateStringConversions.restoreTicks(mDailyEntry.mDateString, mDailyEntry.mStartString);
-//            if (mButtonState == ButtonState.STOP)
-//                msReturnTick = TimeDateStringConversions.restoreTicks(mDailyEntry.mDateString, mDailyEntry.mReturnString);
-//            mHandler.postDelayed(timer, 1000L);
-//        }
     }
 
     private DailyEntry getTodaysEntryInfo(String dateString){
@@ -283,6 +307,7 @@ public class DailyEntryActivity extends AppCompatActivity {
             String displayString = "Total: " + TimeDateStringConversions.convertLongToHMS(msElapsed);
             mDailyTotalView.setText(displayString);
 
+            Log.d("LC", "Tick");
             mHandler.postDelayed(this, 1000L);
         }
     };

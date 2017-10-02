@@ -8,16 +8,14 @@ import android.database.sqlite.SQLiteDatabase;
 import android.os.Environment;
 
 import com.adaskin.android.atrac.models.DailyEntry;
+import com.adaskin.android.atrac.utilities.Constants;
 
 import java.io.BufferedWriter;
 import java.io.BufferedReader;
 import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileOutputStream;
 import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
-import java.nio.channels.FileChannel;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -152,49 +150,49 @@ public class DbAdapter {
                    new String[] {String.valueOf(id)});
     }
 
-    public void importDB()
-    {
-        try  {
-            String srcFileName = Environment.getExternalStorageDirectory() + "/ATrac_backup.db";
-            File srcFile = new File(srcFileName);
-            File dstFile = mContext.getDatabasePath(DbAdapter.DATABASE_NAME);
+//    public void importDB()
+//    {
+//        try  {
+//            String srcFileName = Environment.getExternalStorageDirectory() + "/ATrac_backup.db";
+//            File srcFile = new File(srcFileName);
+//            File dstFile = mContext.getDatabasePath(DbAdapter.DATABASE_NAME);
+//
+//            FileChannel src = new FileInputStream(srcFile).getChannel();
+//            FileChannel dst = new FileOutputStream(dstFile).getChannel();
+//
+//            dst.transferFrom(src, 0, src.size());
+//            src.close();
+//            dst.close();
+//        } catch (Exception e) {
+//            e.printStackTrace();
+//        }
+//    }
 
-            FileChannel src = new FileInputStream(srcFile).getChannel();
-            FileChannel dst = new FileOutputStream(dstFile).getChannel();
-
-            dst.transferFrom(src, 0, src.size());
-            src.close();
-            dst.close();
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-    }
-
-    public void exportDB()
-    {
-        try {
-            String dstFileName = Environment.getExternalStorageDirectory() + "/ATrac_backup.db";
-            File dstFile = new File(dstFileName);
-            File srcFile = mContext.getDatabasePath(DbAdapter.DATABASE_NAME);
-
-            FileChannel src = new FileInputStream(srcFile).getChannel();
-            FileChannel dst = new FileOutputStream(dstFile).getChannel();
-
-            dst.transferFrom(src, 0, src.size());
-
-            src.close();
-            dst.close();
-
-            outputToCsv();
-        } catch(Exception e) {
-            e.printStackTrace();
-        }
-    }
+//    public void exportDB()
+//    {
+//        try {
+//            String dstFileName = Environment.getExternalStorageDirectory() + "/ATrac_backup.db";
+//            File dstFile = new File(dstFileName);
+//            File srcFile = mContext.getDatabasePath(DbAdapter.DATABASE_NAME);
+//
+//            FileChannel src = new FileInputStream(srcFile).getChannel();
+//            FileChannel dst = new FileOutputStream(dstFile).getChannel();
+//
+//            dst.transferFrom(src, 0, src.size());
+//
+//            src.close();
+//            dst.close();
+//
+//            outputToCsv();
+//        } catch(Exception e) {
+//            e.printStackTrace();
+//        }
+//    }
 
     // Change to private once tested
-    private void outputToCsv() {
+    public void outputToCsv() {
 
-        String csvFileName = Environment.getExternalStorageDirectory() + "/ATrac_backup.csv";
+        String csvFileName = Environment.getExternalStorageDirectory() + Constants.BACKUP_FILENAME;
         File csvFile = new File(csvFileName);
         BufferedWriter writer = null;
         try {
@@ -219,7 +217,7 @@ public class DbAdapter {
     }
 
     public void readFromCSV() {
-        String csvFileName = Environment.getExternalStorageDirectory() + "/ATrac_backup.csv";
+        String csvFileName = Environment.getExternalStorageDirectory() + Constants.BACKUP_FILENAME;
         File csvFile = new File(csvFileName);
 
         BufferedReader reader;

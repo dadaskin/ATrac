@@ -282,7 +282,7 @@ public class DailyEntryActivity extends AppCompatActivity {
 
         DbAdapter dbAdapter = new DbAdapter(this);
         dbAdapter.open();
-        dbAdapter.exportDB();
+        dbAdapter.outputToCsv();
         long id = dbAdapter.fetchDailyEntryIdFromDate(mDateString);
         dbAdapter.changeDailyEntry(id, mDailyEntry);
         dbAdapter.close();
@@ -352,9 +352,6 @@ public class DailyEntryActivity extends AppCompatActivity {
         DbAdapter dbAdapter = new DbAdapter(this);
         dbAdapter.open();
         switch (id) {
-            case R.id.undo:
-                dbAdapter.importDB();
-                break;
             case R.id.read_csv:
                 dbAdapter.readFromCSV();
                 break;

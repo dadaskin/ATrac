@@ -8,14 +8,14 @@ import android.database.sqlite.SQLiteDatabase;
 import android.os.Environment;
 
 import com.adaskin.android.atrac.models.DailyEntry;
-import com.adaskin.android.atrac.utilities.Constants;
 
-import java.io.BufferedWriter;
 import java.io.BufferedReader;
+import java.io.DataInputStream;
 import java.io.File;
-import java.io.FileReader;
-import java.io.FileWriter;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.InputStreamReader;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -116,7 +116,7 @@ public class DbAdapter {
 
     public List<DailyEntry> fetchAllDailyEntryObjects() {
         Cursor cursor = fetchAllDailyEntryRecords();
-        ArrayList<DailyEntry> deList = new ArrayList<DailyEntry>();
+        ArrayList<DailyEntry> deList = new ArrayList<>();
         if (cursor.isAfterLast()) {
             cursor.close();
             return deList;
@@ -150,94 +150,68 @@ public class DbAdapter {
                    new String[] {String.valueOf(id)});
     }
 
-//    public void importDB()
-//    {
-//        try  {
-//            String srcFileName = Environment.getExternalStorageDirectory() + "/ATrac_backup.db";
-//            File srcFile = new File(srcFileName);
-//            File dstFile = mContext.getDatabasePath(DbAdapter.DATABASE_NAME);
-//
-//            FileChannel src = new FileInputStream(srcFile).getChannel();
-//            FileChannel dst = new FileOutputStream(dstFile).getChannel();
-//
-//            dst.transferFrom(src, 0, src.size());
-//            src.close();
-//            dst.close();
-//        } catch (Exception e) {
-//            e.printStackTrace();
-//        }
-//    }
+    private String mPath = "ATrac";
+    private String mFilename = "ATrac_data.csv";
 
-//    public void exportDB()
-//    {
-//        try {
-//            String dstFileName = Environment.getExternalStorageDirectory() + "/ATrac_backup.db";
-//            File dstFile = new File(dstFileName);
-//            File srcFile = mContext.getDatabasePath(DbAdapter.DATABASE_NAME);
-//
-//            FileChannel src = new FileInputStream(srcFile).getChannel();
-//            FileChannel dst = new FileOutputStream(dstFile).getChannel();
-//
-//            dst.transferFrom(src, 0, src.size());
-//
-//            src.close();
-//            dst.close();
-//
-//            outputToCsv();
-//        } catch(Exception e) {
-//            e.printStackTrace();
-//        }
-//    }
-
-    // Change to private once tested
     public void outputToCsv() {
+        if (isExternalStorageAvailable() && !isExternalStorageReadOnly()) {
+            File file = new File(mContext.getExternalFilesDir(mPath), mFilename);
+            try {
+                FileOutputStream fos = new FileOutputStream(file);
+                Cursor cursor = fetchAllDailyEntryRecords();
+                while (!cursor.isAfterLast()) {
+                    DailyEntry de = makeDailyEntryFromCursor(cursor);
 
-        String csvFileName = Environment.getExternalStorageDirectory() + Constants.BACKUP_FILENAME;
-        File csvFile = new File(csvFileName);
-        BufferedWriter writer = null;
-        try {
-            writer = new BufferedWriter(new FileWriter(csvFile));
-            Cursor cursor = fetchAllDailyEntryRecords();
-            while (!cursor.isAfterLast()) {
-                DailyEntry de = makeDailyEntryFromCursor(cursor);
-
-                String line = de.mDateString.replace(", ", "=") + "," +
-                        de.mStartString + "," +
-                        de.mLunchString + "," +
-                        de.mReturnString + "," +
-                        de.mStopString + "\n";
-                writer.write(line);
-                cursor.moveToNext();
+                    String line = de.mDateString.replace(", ", "=") + "," +
+                            de.mStartString + "," +
+                            de.mLunchString + "," +
+                            de.mReturnString + "," +
+                            de.mStopString + "\n";
+                    fos.write(line.getBytes());
+                    cursor.moveToNext();
+                }
+                fos.flush();
+                fos.close();
+            } catch (IOException e) {
+                e.printStackTrace();
             }
-        } catch (IOException e) {
-            e.printStackTrace();
-        } finally {
-            try {writer.flush(); writer.close();} catch (Exception e) {}
         }
     }
 
     public void readFromCSV() {
-        String csvFileName = Environment.getExternalStorageDirectory() + Constants.BACKUP_FILENAME;
-        File csvFile = new File(csvFileName);
+        if (isExternalStorageAvailable()) {
+            File file = new File(mContext.getExternalFilesDir(mPath), mFilename);
+            try {
+                FileInputStream fis = new FileInputStream(file);
+                DataInputStream dis = new DataInputStream(fis);
+                BufferedReader reader = new BufferedReader(new InputStreamReader(dis));
+                mDb.execSQL("DELETE from " + DbAdapter.DAILY_ENTRY_TABLE);
 
-        BufferedReader reader;
-        try {
-            reader = new BufferedReader(new FileReader(csvFile));
-            String line;
-            mDb.execSQL("DELETE from " + DbAdapter.DAILY_ENTRY_TABLE);
-            while ((line = reader.readLine()) !=null ) {
-                String[] fieldArray = line.split(",");
-                if (fieldArray.length != 5)
-                    return;
-                String dateString = fieldArray[0].replace("=", ", ");
-                DailyEntry de = new DailyEntry(dateString, fieldArray[1], fieldArray[2], fieldArray[3], fieldArray[4]);
-
-                createDailyEntryRecord(de);
+                String line;
+                while ((line = reader.readLine()) != null) {
+                    String[] fieldArray = line.split(",");
+                    if (fieldArray.length != 5)
+                        return;
+                    String dateString = fieldArray[0].replace("=", ", ");
+                    DailyEntry de = new DailyEntry(dateString, fieldArray[1], fieldArray[2], fieldArray[3], fieldArray[4]);
+                    createDailyEntryRecord(de);
+                }
+                dis.close();
+                fis.close();
+            } catch (IOException e) {
+                e.printStackTrace();
             }
-        } catch (IOException e) {
-            e.printStackTrace();
         }
     }
 
+    private static boolean isExternalStorageReadOnly() {
+        String extStorageState = Environment.getExternalStorageState();
+        return Environment.MEDIA_MOUNTED_READ_ONLY.equals(extStorageState);
+    }
+
+    private static boolean isExternalStorageAvailable() {
+        String extStorageState = Environment.getExternalStorageState();
+        return Environment.MEDIA_MOUNTED.equals(extStorageState);
+    }
 
 }
